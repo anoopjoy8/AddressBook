@@ -4,13 +4,13 @@ ORMReload()
 <cfset errorStruct = {}/>
 <cfset headtitle = "Add Contact" />
 <cfset errorStruct.modalstat = 'hide'/>
-<cfset valstruct.11 = ""/>
-<cfset valstruct.12 = ""/>
-<cfset valstruct.14 = ""/>
-<cfset valstruct.15 = ""/>
-<cfset valstruct.16 = ""/>
-<cfset valstruct.17 = ""/>
-<cfset valstruct.18 = ""/>
+<cfset errorStruct.11 = ""/>
+<cfset errorStruct.12 = ""/>
+<cfset errorStruct.14 = ""/>
+<cfset errorStruct.15 = ""/>
+<cfset errorStruct.16 = ""/>
+<cfset errorStruct.17 = ""/>
+<cfset errorStruct.18 = ""/>
 
 <cfif StructKeyExists(session,"dataLoggedIn") eq "NO">
    <cflocation url = "http://127.0.0.1:8500/tasks/addressbook/" addToken = "no"> 
@@ -131,7 +131,7 @@ ORMReload()
                     <div class="form-group">
                         <label for="exampleInputPassword1">First Name</label>
                         <span class="error" style="color:red;">*</span>
-                        <cfoutput>  <input type="text" class="form-control" name="fname" id="exampleInputPassword1" placeholder="Enter first name" value="#valstruct.11#">
+                        <cfoutput>  <input type="text" class="form-control" name="fname" id="exampleInputPassword1" placeholder="Enter first name" value="#errorStruct.11#">
                         <cfif structKeyExists(errorStruct, 1)> <span class="err"> #errorStruct.1#</span> </cfif> </cfoutput>
                     </div>
                 </div>
@@ -140,7 +140,7 @@ ORMReload()
                     <div class="form-group">
                         <label for="exampleInputPassword1">Second Name</label>
                         <span class="error" style="color:red;">*</span>
-                        <cfoutput> <input type="text" class="form-control" name="sname" id="exampleInputPassword1" placeholder="Enter second name" value="#valstruct.12#">
+                        <cfoutput> <input type="text" class="form-control" name="sname" id="exampleInputPassword1" placeholder="Enter second name" value="#errorStruct.12#">
                         <cfif structKeyExists(errorStruct, 2)> <span class="err"> #errorStruct.2#</span> </cfif>
                         <input type="Hidden" name="modalstat" id="modalstat" value="#errorStruct.modalstat#">  </cfoutput>
                     </div>
@@ -168,7 +168,7 @@ ORMReload()
                         <span class="error" style="color:red;">*</span>
                         <br>
                         <div class="jquery-datepicker">
-                            <cfoutput> <input type="text" class="jquery-datepicker__input datepicker1 form-control" name="dob" value="#valstruct.14#">
+                            <cfoutput> <input type="text" class="jquery-datepicker__input datepicker1 form-control" name="dob" value="#errorStruct.14#">
                             <cfif structKeyExists(errorStruct, 4)> <span class="err"> #errorStruct.4#</span> </cfif> </cfoutput>
                         </div>
                     </div>
@@ -180,7 +180,7 @@ ORMReload()
                     <div class="form-group">
                         <label for="exampleInputPassword1">Email</label>
                         <span class="error" style="color:red;">*</span>
-                        <cfoutput><input type="email" name="email" class="form-control" id="" value="#valstruct.15#" placeholder="Enter Email">
+                        <cfoutput><input type="email" name="email" class="form-control" id="" value="#errorStruct.15#" placeholder="Enter Email">
                         <cfif structKeyExists(errorStruct, 5)> <span class="err"> #errorStruct.5#</span> </cfif> </cfoutput>
                     </div>
                 </div>
@@ -189,7 +189,7 @@ ORMReload()
                     <div class="form-group">
                         <label for="exampleInputPassword1">Phone No</label>
                         <span class="error" style="color:red;">*</span>
-                        <cfoutput> <input type="text" name="phno" class="form-control" id="" value="#valstruct.16#" placeholder="Enter Phone No">
+                        <cfoutput> <input type="text" name="phno" class="form-control" id="" value="#errorStruct.16#" placeholder="Enter Phone No">
                         <cfif structKeyExists(errorStruct, 6)> <span class="err"> #errorStruct.6#</span> </cfif> </cfoutput>
                     </div>
                 </div>
@@ -211,7 +211,7 @@ ORMReload()
                         <label for="exampleInputPassword1">Address</label>
                         <span class="error" style="color:red;">*</span>
                         <div class="mb-3">
-                            <cfoutput><textarea class="form-control" name="address" id="exampleFormControlTextarea1" rows="3">#valstruct.17#</textarea>
+                            <cfoutput><textarea class="form-control" name="address" id="exampleFormControlTextarea1" rows="3">#errorStruct.17#</textarea>
                             <cfif structKeyExists(errorStruct, 7)> <span class="err"> #errorStruct.7#</span> </cfif> </cfoutput>
                         </div>
                     </div>
@@ -222,7 +222,7 @@ ORMReload()
                         <label for="exampleInputPassword1">Street</label>
                         <span class="error" style="color:red;">*</span>
                         <div class="mb-3">
-                            <cfoutput> <textarea class="form-control" name="street" id="exampleFormControlTextarea1" rows="3">#valstruct.18#</textarea>
+                            <cfoutput> <textarea class="form-control" name="street" id="exampleFormControlTextarea1" rows="3">#errorStruct.18#</textarea>
                             <cfif structKeyExists(errorStruct, 8)> <span class="err"> #errorStruct.8#</span> </cfif> </cfoutput>
                         </div>
                     </div>
