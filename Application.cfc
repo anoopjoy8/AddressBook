@@ -1,11 +1,10 @@
 component {
     this.name = "Addressbook";
-    this.datasource = "AppDataSource";
-    this.appBasePath = getDirectoryFromPath(getCurrentTemplatePath());
+    this.datasource = "cold";
+    this.ormEnabled = true;
     this.sessionManagement = true;
+    this.ormSettings = { logsql : true };
+    this.invokeImplicitAccessor = true;
 
-    function onApplicationStart() {
-        application.config="xyz";
-    }
 
  }

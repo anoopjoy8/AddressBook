@@ -1,9 +1,37 @@
+<cfscript>
+ORMReload()
+</cfscript>
+<cfset errorStruct = {}/>
+<cfset headtitle = "Add Contact" />
+<cfset errorStruct.modalstat = 'hide'/>
+<cfset valstruct.11 = ""/>
+<cfset valstruct.12 = ""/>
+<cfset valstruct.14 = ""/>
+<cfset valstruct.15 = ""/>
+<cfset valstruct.16 = ""/>
+<cfset valstruct.17 = ""/>
+<cfset valstruct.18 = ""/>
 
 <cfif StructKeyExists(session,"dataLoggedIn") eq "NO">
    <cflocation url = "http://127.0.0.1:8500/tasks/addressbook/" addToken = "no"> 
 <cfelse>
-    <cfinvoke component='address' method="get" returnVariable='res'/>
+    <!--- <cfinvoke component='address' method="get" returnVariable='res'/> --->
+    <cfset get_users = EntityLoad("giggidy") />
 </cfif>
+
+<cfif structKeyExists(form, 'submit')>  
+    <cfset addmethod      = createObject("component",'address')/>
+    <cfset errorStruct    = addmethod.add(form.fname,form.sname,form.gender,form.dob,form.email,form.phno,form.image,form.address,form.street) />
+</cfif>
+
+<cfif structKeyExists(url, 'edit')> 
+    <cfset headtitle = "Edit Contact" />
+    <cfset errorStruct.modalstat = 'show'/>
+    <cfset get_one     = createObject("component",'address')/>
+    <cfset ret         = get_one.get_det(url.edit) />
+    
+</cfif>
+
 
 <!DOCTYPE html>
 <html>
@@ -61,13 +89,13 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <cfloop query="res">
+                            <cfloop array="#get_users#" index="x">
                                 <cfoutput>
                                     <tr>
-                                    <td>#fname&' '&sname#</td>
-                                    <td>#email#</td>
-                                    <td>#phone#</td>
-                                    <td><button type="button" class="btn btn-outline-primary">Edit</button></td>
+                                    <td>#x.fname#</td>
+                                    <td>#x.email#</td>
+                                    <td>#x.phone#</td>
+                                    <td><a href="http://127.0.0.1:8500/tasks/addressbook/page.cfm?edit=#x.id#"><button type="button" class="btn btn-outline-primary">Edit</button></td></a>
                                     <td><button type="button" class="btn btn-outline-primary">Delete</button></td>
                                     <td><button type="button" class="btn btn-outline-primary">View</button></td>
                                     </tr>
@@ -88,7 +116,7 @@
   <div class="modal-dialog modal-dialog-centered" role="document">
     <div class="modal-content">
       <div class="modal-header modalback">
-        <h5 class="modal-title" id="exampleModalLongTitle">Create Contact</h5>
+        <cfoutput><h5 class="modal-title" id="exampleModalLongTitle">#headtitle#</h5> </cfoutput>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
@@ -97,104 +125,115 @@
       <!-- first section starts here -->
         <h5 class="mtitle"> Personal Contact </h5>
         <hr style="background-color: #040404;height: 1px;"/> 
-        <div class="row">
-            <div class="col-md-6">
-                  <div class="form-group">
-                    <label for="exampleInputPassword1">First Name</label>
-                     <span class="error" style="color:red;">*</span>
-                    <input type="text" class="form-control" id="exampleInputPassword1" placeholder="Enter first name">
-                  </div>
-            </div>
+        <form  method="post" enctype="multipart/form-data">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="exampleInputPassword1">First Name</label>
+                        <span class="error" style="color:red;">*</span>
+                        <cfoutput>  <input type="text" class="form-control" name="fname" id="exampleInputPassword1" placeholder="Enter first name" value="#valstruct.11#">
+                        <cfif structKeyExists(errorStruct, 1)> <span class="err"> #errorStruct.1#</span> </cfif> </cfoutput>
+                    </div>
+                </div>
 
-            <div class="col-md-6">
-                  <div class="form-group">
-                    <label for="exampleInputPassword1">Second Name</label>
-                     <span class="error" style="color:red;">*</span>
-                    <input type="text" class="form-control" id="exampleInputPassword1" placeholder="Enter second name">
-                  </div>
-            </div>
-        </div>
-
-        <div class="row">
-            <div class="col-md-6">
-                <div class="form-group">
-                    <label for="exampleInputPassword1">Gender</label>
-                    <span class="error" style="color:red;">*</span>
-                     <br>
-                    <div class="form-check-inline">
-                    <label class="form-check-label">
-                        <input type="radio" class="form-check-input" name="optradio">Male
-                        <input type="radio" class="form-check-input" name="optradio">Female
-                    </label>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="exampleInputPassword1">Second Name</label>
+                        <span class="error" style="color:red;">*</span>
+                        <cfoutput> <input type="text" class="form-control" name="sname" id="exampleInputPassword1" placeholder="Enter second name" value="#valstruct.12#">
+                        <cfif structKeyExists(errorStruct, 2)> <span class="err"> #errorStruct.2#</span> </cfif>
+                        <input type="Hidden" name="modalstat" id="modalstat" value="#errorStruct.modalstat#">  </cfoutput>
                     </div>
                 </div>
             </div>
-            <div class="col-md-6">
-                <div class="form-group">
-                    <label for="exampleInputPassword1">Date of birth</label>
-                    <span class="error" style="color:red;">*</span>
-                     <br>
-                    <div class="jquery-datepicker">
-                        <input type="text" class="jquery-datepicker__input datepicker1" value="" name="del_up_date">
+
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="exampleInputPassword1">Gender</label>
+                        <span class="error" style="color:red;">*</span>
+                        <br>
+                        <div class="form-check-inline">
+                        <label class="form-check-label">
+                            <input type="radio" value="male"   class="form-check-input" name="gender" checked>Male
+                            <input type="radio" value="female" class="form-check-input" name="gender">Female
+                            <cfoutput> <cfif structKeyExists(errorStruct, 3)> <span class="err"> #errorStruct.3#</span> </cfif> </cfoutput>
+                        </label>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="exampleInputPassword1">Date of birth</label>
+                        <span class="error" style="color:red;">*</span>
+                        <br>
+                        <div class="jquery-datepicker">
+                            <cfoutput> <input type="text" class="jquery-datepicker__input datepicker1 form-control" name="dob" value="#valstruct.14#">
+                            <cfif structKeyExists(errorStruct, 4)> <span class="err"> #errorStruct.4#</span> </cfif> </cfoutput>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="exampleInputPassword1">Email</label>
+                        <span class="error" style="color:red;">*</span>
+                        <cfoutput><input type="email" name="email" class="form-control" id="" value="#valstruct.15#" placeholder="Enter Email">
+                        <cfif structKeyExists(errorStruct, 5)> <span class="err"> #errorStruct.5#</span> </cfif> </cfoutput>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="exampleInputPassword1">Phone No</label>
+                        <span class="error" style="color:red;">*</span>
+                        <cfoutput> <input type="text" name="phno" class="form-control" id="" value="#valstruct.16#" placeholder="Enter Phone No">
+                        <cfif structKeyExists(errorStruct, 6)> <span class="err"> #errorStruct.6#</span> </cfif> </cfoutput>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <input type="file" name="image">
+                    </div>
+                </div>
+            </div>
+            <!-- another section starts here -->
+            <h5 class="mtitle"> Contact Details </h5>
+            <hr style="background-color: #040404;height: 1px;"/> 
+
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="exampleInputPassword1">Address</label>
+                        <span class="error" style="color:red;">*</span>
+                        <div class="mb-3">
+                            <cfoutput><textarea class="form-control" name="address" id="exampleFormControlTextarea1" rows="3">#valstruct.17#</textarea>
+                            <cfif structKeyExists(errorStruct, 7)> <span class="err"> #errorStruct.7#</span> </cfif> </cfoutput>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="exampleInputPassword1">Street</label>
+                        <span class="error" style="color:red;">*</span>
+                        <div class="mb-3">
+                            <cfoutput> <textarea class="form-control" name="street" id="exampleFormControlTextarea1" rows="3">#valstruct.18#</textarea>
+                            <cfif structKeyExists(errorStruct, 8)> <span class="err"> #errorStruct.8#</span> </cfif> </cfoutput>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-
-        <div class="row">
-            <div class="col-md-6">
-                  <div class="form-group">
-                    <label for="exampleInputPassword1">Email</label>
-                     <span class="error" style="color:red;">*</span>
-                    <input type="email" class="form-control" id="" placeholder="Enter Email">
-                  </div>
-            </div>
-
-            <div class="col-md-6">
-                  <div class="form-group">
-                    <label for="exampleInputPassword1">Phone No</label>
-                     <span class="error" style="color:red;">*</span>
-                    <input type="text" class="form-control" id="" placeholder="Enter Phone No">
-                  </div>
-            </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            <button type="submit" name="submit" class="btn btn-primary">Save changes</button>
         </div>
-        <div class="row">
-            <div class="col-md-12">
-                <div class="form-group">
-                    <input type="file" name="image">
-                </div>
-            </div>
-        </div>
-        <!-- another section starts here -->
-        <h5 class="mtitle"> Contact Details </h5>
-        <hr style="background-color: #040404;height: 1px;"/> 
-
-        <div class="row">
-            <div class="col-md-6">
-                  <div class="form-group">
-                    <label for="exampleInputPassword1">Address</label>
-                    <span class="error" style="color:red;">*</span>
-                    <div class="mb-3">
-                        <textarea class="form-control" id="exampleFormControlTextarea1" rows="3"></textarea>
-                    </div>
-                  </div>
-            </div>
-
-            <div class="col-md-6">
-                  <div class="form-group">
-                    <label for="exampleInputPassword1">Street</label>
-                    <span class="error" style="color:red;">*</span>
-                    <div class="mb-3">
-                        <textarea class="form-control" id="exampleFormControlTextarea1" rows="3"></textarea>
-                    </div>
-                  </div>
-            </div>
-        </div>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-primary">Save changes</button>
-      </div>
+      </form>
     </div>
   </div>
 </div>
@@ -221,6 +260,19 @@
             format: 'dd-mm-yyyy'
         });
 
+        </script>
+
+      
+
+        
+        <script>
+        $( document ).ready(function() {
+            
+             if(document.getElementById('modalstat').value == "show")
+             {
+                $("#modalcreate").modal('show');
+             } 
+        });
         </script>
 
 </html>
