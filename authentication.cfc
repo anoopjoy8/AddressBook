@@ -84,12 +84,9 @@
     <cfargument  name="uname"   type="string" required="true">
     <cfargument  name="psw"     type="string" required="true">
     <cfset var loggedIn = false>
-    <cfquery name="login_check" datasource="cold">
-        SELECT * FROM address_users
-        WHERE user_name='#arguments.uname#' OR email='#arguments.uname#' AND password ='#arguments.psw#';
-    </cfquery>
-    <cfif login_check.recordCount EQ 1>
-        <cfset session.dataLoggedIn = {'username'=login_check.user_name,'log_id'=login_check.id,'name'=login_check.name}>
+    <cfset   login_check = ormExecuteQuery( "FROM Loginorm WHERE user_name = '#arguments.uname#' or email = '#arguments.uname#' and password='#arguments.psw#' " ) /> 
+    <cfif arrayIsEmpty(login_check ) EQ  "no">
+        <cfset session.dataLoggedIn = {'username'=login_check[1].user_name,'log_id'=login_check[1].id,'name'=login_check[1].name}>
         <cfset var loggedIn = true>
     </cfif>
     <cfreturn loggedIn>

@@ -1,5 +1,5 @@
 <cfcomponent persistent="true" table="address_contacts" entityname="giggidy">
-  <cfproperty name="id" column = "id" generator="increment">
+      <cfproperty name="id" column = "id" generator="increment">
       <cfproperty name="fname">
       <cfproperty name="sname">
       <cfproperty name="address">

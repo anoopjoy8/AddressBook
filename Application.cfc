@@ -5,6 +5,4 @@ component {
     this.sessionManagement = true;
     this.ormSettings = { logsql : true };
     this.invokeImplicitAccessor = true;
-
-
  }
