@@ -54,6 +54,22 @@
     <cfset errorStruct    = viewmethod.view(url.view) />          
 </cfif>
 
+<cfif structKeyExists(url, 'pdf')>  
+    <cfset pdfmethod      = createObject("component",'address')/>
+    <cfset pdfmethod.pdfdownload() />  
+</cfif>
+
+<cfif structKeyExists(url, 'excel')>  
+    <cfset excelmethod      = createObject("component",'address')/>
+    <cfset excelmethod.exceldownload() />  
+</cfif>
+
+<cfif structKeyExists(url, 'print')>  
+    <cfset printmethod      = createObject("component",'address')/>
+    <cfset printmethod.print() />  
+</cfif>
+
+
 
 
 
@@ -78,13 +94,13 @@
         <nav class="nav navbar-white bg-white justify-content-end navonly">
             <ul class="nav">
                 <li class="nav-item">
-                    <a class="nav-link active" href=""><img src="http://127.0.0.1:8500/tasks/addressbook/public/images/pdf.png" alt="Girl in a jacket" width="50" height="50"></a>
+                    <a class="nav-link active" href="http://127.0.0.1:8500/tasks/addressbook/page.cfm?pdf"><img src="http://127.0.0.1:8500/tasks/addressbook/public/images/pdf.png" alt="Girl in a jacket" width="50" height="50"></a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href=""><img src="http://127.0.0.1:8500/tasks/addressbook/public/images/word.png" alt="Girl in a jacket" width="50" height="50"></a>
+                    <a class="nav-link" href="http://127.0.0.1:8500/tasks/addressbook/page.cfm?excel"><img src="http://127.0.0.1:8500/tasks/addressbook/public/images/word.png" alt="Girl in a jacket" width="50" height="50"></a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href=""><img src="http://127.0.0.1:8500/tasks/addressbook/public/images/printer.png" alt="Girl in a jacket" width="50" height="50"></a>
+                    <a class="nav-link" href="http://127.0.0.1:8500/tasks/addressbook/page.cfm?print"><img src="http://127.0.0.1:8500/tasks/addressbook/public/images/printer.png" alt="Girl in a jacket" width="50" height="50"></a>
                 </li>
             </ul>
         </nav>
@@ -116,7 +132,8 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <cfloop array="#get_users#" index="x">
+                            <cfloop array="#get_users#" item="x">
+                        
                                 <cfoutput>
                                     <tr>
                                     <td>#x.fname#</td>

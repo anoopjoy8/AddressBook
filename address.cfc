@@ -238,4 +238,85 @@
         </cfif>
  
     </cffunction>
+    <cffunction  name="pdfdownload">
+        <cfset get_users = EntityLoad("giggidy") />
+        <cfdocument format="PDF"  filename="file.pdf" overwrite="Yes">
+        <!-- Theme style -->
+        <link rel="stylesheet" href="http://127.0.0.1:8500/tasks/addressbook/public/css/adminlte.min.css">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th scope="col">Name</th>
+                    <th scope="col">Email</th>
+                    <th scope="col">Phone Number</th>
+                </tr>
+            </thead>
+            <tbody>
+                <cfloop array="#get_users#" index="x">
+                    <tr>
+                        <td>#x.fname#</td>
+                        <td>#x.email#</td>
+                        <td>#x.phone#</td>
+                    </tr>
+                </cfloop>
+                        
+            </tbody>
+        </table>
+        </cfdocument> 
+        <!-- <cfheader name="Content-Disposition" value="attachment;filename=file.pdf">
+        <cfcontent type="application/octet-stream" file="#expandPath('.')#\file.pdf" deletefile="Yes"> -->
+        <cfprint type="pdf" source="file.pdf" printer="HP LaserJet 4345 CS">
+    </cffunction>
+    
+    <cffunction  name="exceldownload">
+        <cfset get_users = EntityLoad("giggidy") />
+        // Make a spreadsheet object
+        <cfset spreadsheet = spreadsheetNew("Sheet A") />
+
+        // add a new sheet
+        <cfset spreadsheetCreateSheet(spreadsheet, "Sheet B") />
+
+        // set the new sheet to be the active one
+        <cfset SpreadsheetSetActiveSheet(spreadsheet, "Sheet B")/>
+
+        // populate Sheet B
+        <cfset SpreadsheetSetCellValue(spreadsheet, "Name",  1, 1) />
+        <cfset SpreadsheetSetCellValue(spreadsheet, "Email", 1, 2)/>
+        <cfset SpreadsheetSetCellValue(spreadsheet, "Phone", 1, 3) />
+        <cfoutput>
+            <cfloop array="#get_users#" index="j">
+                <cfset SpreadSheetAddRow(spreadsheet,'#j.fname#,#j.email#,#j.phone#')/>
+            </cfloop>
+        </cfoutput>
+        <cfheader name="Content-Disposition" value="inline; filename=testFile.xls">
+        <cfcontent type="application/vnd.msexcel" variable="#SpreadSheetReadBinary(spreadsheet)#">
+    </cffunction>
+
+    <cffunction  name="print">
+        <cfset get_users = EntityLoad("giggidy") />
+        <cfdocument format="PDF"  filename="file.pdf" overwrite="Yes">
+        <!-- Theme style -->
+        <link rel="stylesheet" href="http://127.0.0.1:8500/tasks/addressbook/public/css/adminlte.min.css">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th scope="col">Name</th>
+                    <th scope="col">Email</th>
+                    <th scope="col">Phone Number</th>
+                </tr>
+            </thead>
+            <tbody>
+                <cfloop array="#get_users#" index="x">
+                    <tr>
+                        <td>#x.fname#</td>
+                        <td>#x.email#</td>
+                        <td>#x.phone#</td>
+                    </tr>
+                </cfloop>
+                        
+            </tbody>
+        </table>
+        </cfdocument> 
+        <cfprint type="pdf" source="file.pdf" printer="Microsoft Print to PDF">
+    </cffunction>
 </cfcomponent>

@@ -25,7 +25,7 @@
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="google-signin-client_id" content="913310001804-pck8u89o0tp8eraor2m1jtcvdiqtbnd4.apps.googleusercontent.com">
+  <meta name="google-signin-client_id" content="1009946409223-o59j27t0k6l9h4h9toop9asmuia42g4e.apps.googleusercontent.com">
   <title>Address Book | Anoop</title>
   <!-- Tell the browser to be responsive to screen width -->
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -33,6 +33,7 @@
 </head>
 <body>
 <cfinclude template = "header.cfm">
+<script src="https://apis.google.com/js/platform.js" async defer></script>
 <div class="div-center">
 <div class="card border-0 shadow rounded-3 my-5 c1">
   <div class="row">
@@ -64,6 +65,11 @@
           <div class="d-grid ">
             
               <img src="http://127.0.0.1:8500/tasks/addressbook/public/images/face-logo.png" alt="Girl in a jacket" width="50" height="50">  Sign in with Facebook
+              <div class="g-signin2" data-onsuccess="onSignIn"></div>
+              <data class="data">
+              <p> Name </p>
+              <p id="name"> </p>
+              </div>
            
           </div>
 
@@ -78,8 +84,9 @@
 </div>
 </div>
 
-<script src="https://apis.google.com/js/platform.js" async defer></script>
+
 <!-- jQuery -->
+<script src="http://127.0.0.1:8500/tasks/addressbook/public/jquery/index.js"></script>
 <script src="http://127.0.0.1:8500/tasks/addressbook/public/jquery/jquery.min.js"></script>
 <!-- Bootstrap 4 -->
 <script src="http://127.0.0.1:8500/tasks/addressbook/public/jquery/bootstrap.bundle.min.js"></script>

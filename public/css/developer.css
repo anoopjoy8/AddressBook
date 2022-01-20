@@ -119,3 +119,6 @@ body { background: rgb(233, 246, 250) !important; }
   font-size: 21px;
   font-weight: bolder;
 }
+.data{
+  display: none;
+}
