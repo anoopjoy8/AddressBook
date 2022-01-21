@@ -96,7 +96,51 @@
 <!--- Logout Method --->
 <cffunction  name="logoutMethod" access="public" output="false" returntype="void">
     <cfset structDelete(session,'dataLoggedIn')/>
+    <cflocation url ="http://127.0.0.1:8500/tasks/addressbook">
     
+</cffunction>
+
+<!--- Google signin --->
+<cffunction  name="googleMethod">
+    <cfset var loggedIn = false>
+    <cfoauth
+    Type="Google"
+    clientid="1009946409223-o59j27t0k6l9h4h9toop9asmuia42g4e.apps.googleusercontent.com" 
+    scope="https://www.googleapis.com/auth/userinfo.email+https://www.googleapis.com/auth/userinfo.profile"
+    secretkey="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" 
+    result="googleLoginResult"  
+    redirecturi="http://127.0.0.1:8500/tasks/addressbook/index.cfm?ul=google">
+    <cfset   login_check = ormExecuteQuery( "FROM Loginorm WHERE email = '#googleLoginResult.other.email#'" ) />
+    <cfif arrayIsEmpty(login_check ) EQ  "yes">
+        <cfset  address_contacts = new LoginOrm()/>
+        <cfset  address_contacts.setname("#googleLoginResult.other.given_name#")/>
+        <cfset  address_contacts.setuser_name("#googleLoginResult.other.given_name#")/>
+        <cfset  address_contacts.setemail("#googleLoginResult.other.email#")/>
+        <cfset EntitySave(address_contacts) />
+        
+        <cfset   login_check = ormExecuteQuery( "FROM Loginorm WHERE id = '#address_contacts.getid()#'" ) />
+        <cfif arrayIsEmpty(login_check ) EQ  "no">
+            <cfset session.dataLoggedIn = {'username'=login_check[1].user_name,'log_id'=login_check[1].id,'name'=login_check[1].name}>
+            <cfset var loggedIn = true>
+        </cfif>
+    <cfelse>
+        <cfset session.dataLoggedIn = {'username'=login_check[1].user_name,'log_id'=login_check[1].id,'name'=login_check[1].name}>
+        <cfset var loggedIn = true>
+    </cfif>
+    <cfreturn loggedIn>
+</cffunction>
+
+<!--- Facebook signin --->
+<cffunction  name="facebookMethod">
+    <cfset var loggedIn = false>
+    <cfoauth
+        type="Facebook"
+        clientid ="452334636544459"
+        secretkey="92cbe214d85ae7ada35116fe20982617"
+        result="res"
+        redirecturi="http://127.0.0.1:8500/tasks/addressbook/index.cfm?ul=facebook"
+    >           
+    <cfdump  var="#res#">
 </cffunction>
 
 </cfcomponent>

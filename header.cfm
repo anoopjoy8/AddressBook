@@ -8,9 +8,15 @@
         <li class="nav-item nav1">
           <a href="sign-up.cfm"><i class="fas fa-user navsub"> <span class="text1">Signup</span></i></a>
         </li>
-      <li class="nav-item nav2">
-        <a href=""><i class="fas fa-sign-in-alt navsub"> <span class="text1">Login</span></i></a>
-      </li>
+      <cfif structKeyExists(session, 'dataLoggedIn')> 
+        <li class="nav-item nav2">
+          <a href="http://127.0.0.1:8500/tasks/addressbook/page.cfm?logout"><i class="fas fa-sign-in-alt navsub"> <span class="text1">Logout</span></i></a>
+        </li>
+      <cfelse>
+        <li class="nav-item nav2">
+          <a href=""><i class="fas fa-sign-in-alt navsub"> <span class="text1">Login</span></i></a>
+        </li>
+      </cfif>
       </ul>
     </div>
   </nav>

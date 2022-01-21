@@ -18,8 +18,19 @@
 </cfif>
 
 <cfif structKeyExists(url, 'ul')> 
-   <cflocation url ="http://127.0.0.1:8500/tasks/addressbook/page.cfm">
+   <cfif url.ul eq "google">
+      <cfset loging                = createObject("component",'authentication')/>
+      <cfset status = loging.googleMethod()/>
+      <cfif status eq "true">
+          <cflocation url ="http://127.0.0.1:8500/tasks/addressbook/page.cfm">
+      </cfif>
+   </cfif>
+   <cfif url.ul eq "facebook">
+      <cfset loging                = createObject("component",'authentication')/>
+      <cfset status                = loging.facebookMethod()/>
+   </cfif>
 </cfif>
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -58,19 +69,15 @@
           </div>
           <hr class="my-4">
           <div class="d-grid mb-2">
-            <a href="index.cfm?ul=g">
-              <img src="http://127.0.0.1:8500/tasks/addressbook/public/images/google-logo.png" alt="Girl in a jacket" width="50" height="50"> Sign in with Google
+            <a href="http://127.0.0.1:8500/tasks/addressbook/index.cfm?ul=google">
+             <img src="http://127.0.0.1:8500/tasks/addressbook/public/images/google-logo.png" alt="Girl in a jacket" width="50" height="50"> Sign in with Google 
             </a>
           </div>
           <div class="d-grid ">
-            
-              <img src="http://127.0.0.1:8500/tasks/addressbook/public/images/face-logo.png" alt="Girl in a jacket" width="50" height="50">  Sign in with Facebook
-              <div class="g-signin2" data-onsuccess="onSignIn"></div>
-              <data class="data">
-              <p> Name </p>
-              <p id="name"> </p>
-              </div>
-           
+             <a href="http://127.0.0.1:8500/tasks/addressbook/index.cfm?ul=facebook">
+                <img src="http://127.0.0.1:8500/tasks/addressbook/public/images/face-logo.png" alt="Girl in a jacket" width="50" height="50">  Sign in with Facebook
+              </a>
+
           </div>
 
           <div class="d-grid s2">
@@ -85,8 +92,9 @@
 </div>
 
 
+
+
 <!-- jQuery -->
-<script src="http://127.0.0.1:8500/tasks/addressbook/public/jquery/index.js"></script>
 <script src="http://127.0.0.1:8500/tasks/addressbook/public/jquery/jquery.min.js"></script>
 <!-- Bootstrap 4 -->
 <script src="http://127.0.0.1:8500/tasks/addressbook/public/jquery/bootstrap.bundle.min.js"></script>

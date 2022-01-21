@@ -69,10 +69,10 @@
     <cfset printmethod.print() />  
 </cfif>
 
-
-
-
-
+<cfif structKeyExists(url, 'logout')>  
+    <cfset logoutmethod      = createObject("component",'authentication')/>
+    <cfset logoutmethod.logoutMethod() />  
+</cfif>
 
 <!DOCTYPE html>
 <html>
