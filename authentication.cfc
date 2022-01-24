@@ -138,7 +138,7 @@
         clientid ="452334636544459"
         secretkey="92cbe214d85ae7ada35116fe20982617"
         result="res"
-        redirecturi="http://127.0.0.1:8500/tasks/addressbook/index.cfm?ul=facebook"
+        redirecturi="https://localhost:8500/addressbook/index.cfm?ul=facebook"
     >           
     <cfdump  var="#res#">
 </cffunction>

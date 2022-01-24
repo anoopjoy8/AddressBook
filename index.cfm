@@ -74,9 +74,11 @@
             </a>
           </div>
           <div class="d-grid ">
-             <a href="http://127.0.0.1:8500/tasks/addressbook/index.cfm?ul=facebook">
+            <!--- <a href="http://127.0.0.1:8500/tasks/addressbook/index.cfm?ul=facebook">
                 <img src="http://127.0.0.1:8500/tasks/addressbook/public/images/face-logo.png" alt="Girl in a jacket" width="50" height="50">  Sign in with Facebook
-              </a>
+              </a> --->
+
+              <a href="javascript:void(0)" onclick="Fblogin()"> Login with Facebook</a>
 
           </div>
 
@@ -92,7 +94,52 @@
 </div>
 
 
+<script>
 
+  window.fbAsyncInit = function() {
+
+      FB.init({
+        appId      : '452334636544459',
+        cookie     : true,                     // Enable cookies to allow the server to access the session.
+        xfbml      : true,                     // Parse social plugins on this webpage.
+        version    : 'v12.0'           // Use this Graph API version for this call.
+      });
+      FB.AppEvents.logpageView();
+      };
+
+      (function(d, s, id){
+      var js, fjs = d.getElementsByTagName(s)[0];
+      if (d.getElementById(id)) {return;}
+      js = d.createElement(s); js.id = id;
+      js.src = "https://connect.facebook.net/en_US/sdk.js";
+      fjs.parentNode.insertBefore(js, fjs);
+    }(document, 'script', 'facebook-jssdk'));
+
+    function Fblogin(){
+      FB.login(function(response){
+        if(response.authResponse){
+              Fbafterlogin();
+        }
+
+      });
+
+    }
+
+    function Fbafterlogin(){
+      FB.getLoginStatus(function(response) {
+          if (response.status === 'connected') {   // Logged into your webpage and Facebook.
+              testAPI()
+            FB.api('/me', function(response) {
+            console.log(response);
+            });
+          }
+
+      }); 
+    }
+
+
+
+  </script>
 
 <!-- jQuery -->
 <script src="http://127.0.0.1:8500/tasks/addressbook/public/jquery/jquery.min.js"></script>
