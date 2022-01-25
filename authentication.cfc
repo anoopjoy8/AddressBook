@@ -131,16 +131,34 @@
 </cffunction>
 
 <!--- Facebook signin --->
-<cffunction  name="facebookMethod">
-    <cfset var loggedIn = false>
-    <cfoauth
-        type="Facebook"
-        clientid ="452334636544459"
-        secretkey="92cbe214d85ae7ada35116fe20982617"
-        result="res"
-        redirecturi="https://localhost:8500/addressbook/index.cfm?ul=facebook"
-    >           
-    <cfdump  var="#res#">
+<cffunction  name="facebookMethod" output="yes" returntype="any" access="remote">
+      <cfargument name="emailId">
+	  <cfargument name="firstName">
+	  <cfargument name="lastName">
+     
+
+          <cfset   login_check = ormExecuteQuery( "FROM Loginorm WHERE email = '#arguments.emailId#'" ) />
+          <cfif arrayIsEmpty(login_check ) EQ  "yes">
+            <cfset  address_contacts = new LoginOrm()/>
+            <cfset  address_contacts.setname("#arguments.firstName#")/>
+            <cfset  address_contacts.setuser_name("#arguments.firstName#")/>
+            <cfset  address_contacts.setemail("#arguments.emailId#")/>
+            <cfset EntitySave(address_contacts) />
+            
+            <cfset   login_check = ormExecuteQuery( "FROM Loginorm WHERE id = '#address_contacts.getid()#'" ) />
+            <cfif arrayIsEmpty(login_check ) EQ  "no">
+                <cfset session.dataLoggedIn = {'username'=login_check[1].user_name,'log_id'=login_check[1].id,'name'=login_check[1].name}>
+                
+            </cfif>
+          <cfelse>
+            <cfset session.dataLoggedIn = {'username'=login_check[1].user_name,'log_id'=login_check[1].id,'name'=login_check[1].name}>
+          
+         </cfif>
+      
+      
+
+    <!--- now use your structure --->
+    
 </cffunction>
 
 </cfcomponent>

@@ -1,4 +1,5 @@
 <cfset errorStructlog = {}/>
+<cfset coInfo         = {}/>
 <cfset status         = ""/>
 <cfif structKeyExists(form, 'submit')> 
   <cfscript> 
@@ -25,11 +26,12 @@
           <cflocation url ="http://127.0.0.1:8500/tasks/addressbook/page.cfm">
       </cfif>
    </cfif>
-   <cfif url.ul eq "facebook">
+   <cfif url.ul eq "fb">
       <cfset loging                = createObject("component",'authentication')/>
       <cfset status                = loging.facebookMethod()/>
    </cfif>
 </cfif>
+
 
 <!DOCTYPE html>
 <html>
@@ -78,7 +80,12 @@
                 <img src="http://127.0.0.1:8500/tasks/addressbook/public/images/face-logo.png" alt="Girl in a jacket" width="50" height="50">  Sign in with Facebook
               </a> --->
 
-              <a href="javascript:void(0)" onclick="Fblogin()"> Login with Facebook</a>
+<!--- <a  id="fbLink" href="http://127.0.0.1:8500/tasks/addressbook/index.cfm?ul=fb"> Login with Facebook</a> --->
+
+              <a  id="fbLink" href="javascript:void(0)" onclick="FbLogin()"> Login with Facebook</a>
+              <div id="status">
+              </div>
+              <div id="userData"></div>
 
           </div>
 
@@ -97,48 +104,75 @@
 <script>
 
   window.fbAsyncInit = function() {
+    FB.init({
+      appId      : '2784409778518243',
+      xfbml      : true,
+      version    : 'v12.0'
+    });
+    FB.AppEvents.logPageView();
+  };
 
-      FB.init({
-        appId      : '452334636544459',
-        cookie     : true,                     // Enable cookies to allow the server to access the session.
-        xfbml      : true,                     // Parse social plugins on this webpage.
-        version    : 'v12.0'           // Use this Graph API version for this call.
-      });
-      FB.AppEvents.logpageView();
-      };
+  (function(d, s, id){
+     var js, fjs = d.getElementsByTagName(s)[0];
+     if (d.getElementById(id)) {return;}
+     js = d.createElement(s); js.id = id;
+     js.src = "https://connect.facebook.net/en_US/sdk.js";
+     fjs.parentNode.insertBefore(js, fjs);
+   }(document, 'script', 'facebook-jssdk'));
 
-      (function(d, s, id){
-      var js, fjs = d.getElementsByTagName(s)[0];
-      if (d.getElementById(id)) {return;}
-      js = d.createElement(s); js.id = id;
-      js.src = "https://connect.facebook.net/en_US/sdk.js";
-      fjs.parentNode.insertBefore(js, fjs);
-    }(document, 'script', 'facebook-jssdk'));
-
-    function Fblogin(){
-      FB.login(function(response){
-        if(response.authResponse){
-              Fbafterlogin();
+     function FbLogin() {
+            FB.login(function (response) {
+                if (response.authResponse) {
+                    // Get and display the user profile data
+                    getFbUserData();
+                } else {
+                    document.getElementById('status').innerHTML = 'User cancelled login or did not fully authorize.';
+                }
+            }, {scope: 'email'});
         }
 
-      });
 
-    }
-
-    function Fbafterlogin(){
-      FB.getLoginStatus(function(response) {
-          if (response.status === 'connected') {   // Logged into your webpage and Facebook.
-              testAPI()
-            FB.api('/me', function(response) {
-            console.log(response);
+        // Logout from facebook
+        function fbLogout() {
+            FB.logout(function() {
+                document.getElementById('fbLink').setAttribute("onclick","fbLogin()");
+                document.getElementById('fbLink').innerHTML = '<img src="images/fb-login-btn.png"/>';
+                document.getElementById('userData').innerHTML = '';
+                document.getElementById('status').innerHTML = '<p>You have successfully logout from Facebook.</p>';
             });
-          }
-
-      }); 
-    }
+        }
 
 
+  </script>
 
+
+
+  <script>     
+        function getFbUserData(){
+            FB.api('/me', {locale: 'en_US', fields: 'id,first_name,last_name,email,link,gender,locale,picture'},
+            function (response) {
+                document.getElementById('fbLink').setAttribute("onclick","fbLogout()");
+                document.getElementById('fbLink').innerHTML = 'Logout from Facebook';
+                document.getElementById('status').innerHTML = '<p>Thanks for logging in, ' + response.first_name + '!</p>';
+                document.getElementById('userData').innerHTML = '<h2>Facebook Profile Details</h2><p><img src="'+response.picture.data.url+'"/></p><p><b>FB ID:</b> '+response.id+'</p><p><b>Name:</b> '+response.first_name+' '+response.last_name+'</p><p><b>Email:</b> '+response.email+'</p><p><b>Gender:</b> '+response.gender+'</p><p><b>FB Profile:</b> <a target="_blank" href="'+response.link+'">click to view profile</a></p>';
+                            var spanglist = {
+                            name: response.first_name,
+                            email:response.email};
+                     var data = JSON.stringify(userData);
+
+                              const xhttp = new XMLHttpRequest();
+                              xhttp.onload = function(){
+                                  window.location.href = "page.cfm"
+                              }
+                              xhttp.open("POST", "authentication.cfc?method=facebookMethod&emailId="+response.email+"&firstName="+response.first_name+"&lastName="+response.last_name, true);
+                              xhttp.send();
+
+                                                                                              console.log(spanglist);
+                              });
+           
+
+            
+        }
   </script>
 
 <!-- jQuery -->
