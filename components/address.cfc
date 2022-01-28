@@ -100,25 +100,22 @@
             <cffile 
                 action = "upload" 
                 fileField = "image" 
-                destination="C:\ColdFusion2021\cfusion\wwwroot\tasks\addressbook\public\files"
+                destination="F:\Coldfushion\cfusion\wwwroot\tasks\addressbook\public\files"
                 allowedExtensions="jpg"
                 result='fileUploadResult'
                 nameConflict = makeunique
             >
            
-            <cfset  address_contacts = new AddressBookOrm()/>
-            <cfset  address_contacts.setfname("#arguments.fname#")/>
-            <cfset  address_contacts.setsname("#arguments.sname#")/>
-            <cfset  address_contacts.setemail("#arguments.email#")/>
-            <cfset  address_contacts.setgender("#arguments.gender#")/>
-            <cfset  address_contacts.setdob("#DateFormat(arguments.dob,'yyyy-mm-dd')#")/>
-            <cfset  address_contacts.setphoto("#fileUploadResult.clientFile#")/>
-            <cfset  address_contacts.setphone("#arguments.phno#")/>
-            <cfset  address_contacts.setaddress("#arguments.address#")/>
-            <cfset  address_contacts.setstreet_name("#arguments.street#")/>
 
-            <cfset EntitySave(address_contacts) />
-            <cfscript>writeOutput(address_contacts.getid());</cfscript>
+
+            <cfquery name="signupq" datasource="cold" result="sResult">
+                INSERT INTO address_contacts (fname,sname,email,phone,gender,dob,photo,address,street_name)
+                VALUES (<CFQUERYPARAM VALUE="#arguments.fname#">,<CFQUERYPARAM VALUE="#arguments.sname#">,<CFQUERYPARAM VALUE="#arguments.email#">,<CFQUERYPARAM VALUE="#arguments.phno#">
+                ,<CFQUERYPARAM VALUE="#arguments.gender#">,<CFQUERYPARAM VALUE="#DateFormat(arguments.dob,'yyyy-mm-dd')#">,<CFQUERYPARAM VALUE="#fileUploadResult.clientFile#">,
+                <CFQUERYPARAM VALUE="#arguments.address#">,<CFQUERYPARAM VALUE="#arguments.street#">);
+            </cfquery>
+
+            
             <cfreturn errorStruct>    
         </cfif>
 

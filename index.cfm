@@ -1,15 +1,16 @@
+
 <cfset errorStructlog = {}/>
 <cfset coInfo         = {}/>
 <cfset status         = ""/>
 <cfif structKeyExists(form, 'submit')> 
   <cfscript> 
-      validating            = createObject("component",'authentication');
+      validating            = createObject("component",'components/authentication');
       errorStructlog        = validating.validateUser(form.username,form.pass);
       isEmpty               = StructIsEmpty(errorStructlog);
   </cfscript>
   <cfif isEmpty eq "Yes">
     <cfscript> 
-      loging                = createObject("component",'authentication');
+      loging                = createObject("component",'components/authentication');
       status                = loging.loginMethod(form.username,form.pass);
     </cfscript>
     <cfif status eq "true">
@@ -20,14 +21,14 @@
 
 <cfif structKeyExists(url, 'ul')> 
    <cfif url.ul eq "google">
-      <cfset loging                = createObject("component",'authentication')/>
+      <cfset loging                = createObject("component",'components/authentication')/>
       <cfset status = loging.googleMethod()/>
       <cfif status eq "true">
           <cflocation url ="http://127.0.0.1:8500/tasks/addressbook/page.cfm">
       </cfif>
    </cfif>
    <cfif url.ul eq "fb">
-      <cfset loging                = createObject("component",'authentication')/>
+      <cfset loging                = createObject("component",'components/authentication')/>
       <cfset status                = loging.facebookMethod()/>
    </cfif>
 </cfif>

@@ -14,16 +14,10 @@
 <cfset errorStruct.val.street  =""/>
 <cfset errorStruct.val.photo   =""/>
 
-
-<cfif StructKeyExists(session,"dataLoggedIn") eq "NO">
-   <cflocation url = "http://127.0.0.1:8500/tasks/addressbook/" addToken = "no"> 
-<cfelse>
-    <!--- <cfinvoke component='address' method="get" returnVariable='res'/> --->
-    <cfset get_users = EntityLoad("giggidy") />
-</cfif>
+<cfset get_users = EntityLoad("giggidy") />
 
 <cfif structKeyExists(form, 'submit')>  
-    <cfset addmethod      = createObject("component",'address')/>
+    <cfset addmethod      = createObject("component",'components/address')/>
     <cfset errorStruct    = addmethod.add(form.fname,form.sname,form.gender,form.dob,form.email,form.phno,form.image,form.address,form.street) />            
 </cfif>
 
@@ -34,43 +28,43 @@
 <cfif structKeyExists(url, 'edit')> 
     <cfset headtitle = "Edit Contact" />
     <cfset errorStruct.modalstat = 'show'/>
-    <cfset get_one     = createObject("component",'address')/>
+    <cfset get_one     = createObject("component",'components/address')/>
     <cfset errorStruct = get_one.get_det(url.edit) />   
 </cfif>
 
 <cfif structKeyExists(form, 'updatesubmit')>  
-    <cfset updatemethod   = createObject("component",'address')/>
+    <cfset updatemethod   = createObject("component",'components/address')/>
     <cfset errorStruct    = updatemethod.update(form.fname,form.sname,form.gender,form.dob,form.email,form.phno,form.image,form.address,form.street) />          
 </cfif>
 
 <cfif structKeyExists(url, 'delete')>  
-    <cfset deletemethod   = createObject("component",'address')/>
+    <cfset deletemethod   = createObject("component",'components/address')/>
     <cfset errorStruct    = deletemethod.delete(url.delete) />            
 </cfif>
 
 <cfif structKeyExists(url, 'view')>  
     <cfset headtitle = "Contact Details" />
-    <cfset viewmethod     = createObject("component",'address')/>
+    <cfset viewmethod     = createObject("component",'components/address')/>
     <cfset errorStruct    = viewmethod.view(url.view) />          
 </cfif>
 
 <cfif structKeyExists(url, 'pdf')>  
-    <cfset pdfmethod      = createObject("component",'address')/>
+    <cfset pdfmethod      = createObject("component",'components/address')/>
     <cfset pdfmethod.pdfdownload() />  
 </cfif>
 
 <cfif structKeyExists(url, 'excel')>  
-    <cfset excelmethod      = createObject("component",'address')/>
+    <cfset excelmethod      = createObject("component",'components/address')/>
     <cfset excelmethod.exceldownload() />  
 </cfif>
 
 <cfif structKeyExists(url, 'print')>  
-    <cfset printmethod      = createObject("component",'address')/>
+    <cfset printmethod      = createObject("component",'components/address')/>
     <cfset printmethod.print() />  
 </cfif>
 
 <cfif structKeyExists(url, 'logout')>  
-    <cfset logoutmethod      = createObject("component",'authentication')/>
+    <cfset logoutmethod      = createObject("component",'components/authentication')/>
     <cfset logoutmethod.logoutMethod() />  
 </cfif>
 
@@ -132,18 +126,20 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <cfloop array="#get_users#" item="x">
-                        
-                                <cfoutput>
-                                    <tr>
-                                    <td>#x.fname#</td>
-                                    <td>#x.email#</td>
-                                    <td>#x.phone#</td>
-                                    <td><a href="http://127.0.0.1:8500/tasks/addressbook/page.cfm?edit=#x.id#"><button type="button"   class="btn btn-outline-primary">Edit</button></a></td>
-                                    <td><a href="http://127.0.0.1:8500/tasks/addressbook/page.cfm?delete=#x.id#"><button type="button" class="btn btn-outline-primary">Delete</button></a></td>
-                                    <td><a href="http://127.0.0.1:8500/tasks/addressbook/page.cfm?view=#x.id#"><button type="button" class="btn btn-outline-primary">View</button></a></td>
-                                    </tr>
-                                </cfoutput>
+                            <cfloop array="#get_users#" item="x">                                
+                                <cfsavecontent variable = "vn"> 
+                                    <cfoutput>
+                                        <tr>
+                                        <td>#x.fname#</td>
+                                        <td>#x.email#</td>
+                                        <td>#x.phone#</td>
+                                        <td><a href="http://127.0.0.1:8500/tasks/addressbook/page.cfm?edit=#x.id#"><button type="button"   class="btn btn-outline-primary">Edit</button></a></td>
+                                        <td><a href="http://127.0.0.1:8500/tasks/addressbook/page.cfm?delete=#x.id#"><button type="button" class="btn btn-outline-primary">Delete</button></a></td>
+                                        <td><a href="http://127.0.0.1:8500/tasks/addressbook/page.cfm?view=#x.id#"><button type="button" class="btn btn-outline-primary">View</button></a></td>
+                                        </tr>
+                                    </cfoutput>
+                                </cfsavecontent>
+                                <cfoutput> #vn#</cfoutput>
                             </cfloop>
                         
                         </tbody>
