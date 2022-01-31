@@ -2,8 +2,12 @@
 <cfcomponent displayName='address' hint='mult'>
 
      <cffunction  name="delete">
-        <cfset userdelete  = EntityLoadByPK("giggidy",#url.delete#) />
-        <cfset EntityDelete(userdelete) />
+        <!--- <cfset userdelete  = EntityLoadByPK("giggidy",#url.delete#) />
+        <cfset EntityDelete(userdelete) /> --->
+        <cfquery name="dlt" datasource="cold" result="sResult">
+            DELETE FROM address_contacts WHERE id= <CFQUERYPARAM VALUE="#url.delete#">;
+        </cfquery>
+
         <cflocation url = "http://127.0.0.1:8500/tasks/addressbook/page.cfm" addToken = "no"> 
      </cffunction>
 
@@ -127,7 +131,7 @@
         <cfset errorStruct.error = {} />
         <cfset usersdet          = EntityLoadByPK("giggidy", #url.edit#) />
         <cfset errorStruct.modalstat   = 'show'/>
-         <cfset errorStruct.modalstat2 = 'hide'/>
+        <cfset errorStruct.modalstat2 = 'hide'/>
         
         <cfset errorStruct.val = {fname="#usersdet.fname#",sname="#usersdet.sname#",gender="#usersdet.gender#",email="#usersdet.email#",dob="#usersdet.dob#",phone="#usersdet.phone#",address="#usersdet.address#",street="#usersdet.street_name#",photo="#usersdet.photo#"} />
         <cfreturn errorStruct> 
@@ -215,22 +219,15 @@
             <cffile 
                 action = "upload" 
                 fileField = "image" 
-                destination="C:\ColdFusion2021\cfusion\wwwroot\tasks\addressbook\public\files"
+                destination="F:\Coldfushion\cfusion\wwwroot\tasks\addressbook\public\files"
                 allowedExtensions="jpg"
                 result='fileUploadResult'
                 nameConflict = makeunique
             >
- 
-            <cfset  address_contacts = EntityLoadByPK("giggidy", #url.edit#) />
-            <cfset  address_contacts.setfname("#arguments.fname#")/>
-            <cfset  address_contacts.setsname("#arguments.sname#")/>
-            <cfset  address_contacts.setemail("#arguments.email#")/>
-            <cfset  address_contacts.setgender("#arguments.gender#")/>
-            <cfset  address_contacts.setdob("#DateFormat(arguments.dob,'yyyy-mm-dd')#")/>
-            <cfset  address_contacts.setphoto("#fileUploadResult.clientFile#")/>
-            <cfset  address_contacts.setphone("#arguments.phno#")/>
-            <cfset  address_contacts.setaddress("#arguments.address#")/>
-            <cfset  address_contacts.setstreet_name("#arguments.street#")/>
+            <cfquery name="updates" datasource="cold" result="sResult">
+                UPDATE address_contacts SET fname= <CFQUERYPARAM VALUE="#arguments.fname#">,sname = <CFQUERYPARAM VALUE="#arguments.sname#">,email = <CFQUERYPARAM VALUE="#arguments.email#">,phone = <CFQUERYPARAM VALUE="#arguments.phno#">, gender = <CFQUERYPARAM VALUE="#arguments.gender#">,dob = <CFQUERYPARAM VALUE="#DateFormat(arguments.dob,'yyyy-mm-dd')#">,address = <CFQUERYPARAM VALUE="#arguments.address#">,street_name= <CFQUERYPARAM VALUE="#arguments.street#"> WHERE id=#url.edit#;
+            </cfquery>
+
             <cfreturn errorStruct>    
         </cfif>
  

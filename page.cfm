@@ -50,7 +50,7 @@
 
 <cfif structKeyExists(url, 'pdf')>  
     <cfset pdfmethod      = createObject("component",'components/address')/>
-    <cfset pdfmethod.pdfdownload() />  
+    <cfset pdfmethod.pdfdownload() />
 </cfif>
 
 <cfif structKeyExists(url, 'excel')>  
@@ -59,8 +59,9 @@
 </cfif>
 
 <cfif structKeyExists(url, 'print')>  
-    <cfset printmethod      = createObject("component",'components/address')/>
-    <cfset printmethod.print() />  
+     <cfset printmethod      = createObject("component",'components/address')/>
+     <cfset printmethod.print() />
+   
 </cfif>
 
 <cfif structKeyExists(url, 'logout')>  
@@ -126,8 +127,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <cfloop array="#get_users#" item="x">                                
-                                <cfsavecontent variable = "vn"> 
+                            <cfloop array="#get_users#" item="x">                               
                                     <cfoutput>
                                         <tr>
                                         <td>#x.fname#</td>
@@ -137,9 +137,7 @@
                                         <td><a href="http://127.0.0.1:8500/tasks/addressbook/page.cfm?delete=#x.id#"><button type="button" class="btn btn-outline-primary">Delete</button></a></td>
                                         <td><a href="http://127.0.0.1:8500/tasks/addressbook/page.cfm?view=#x.id#"><button type="button" class="btn btn-outline-primary">View</button></a></td>
                                         </tr>
-                                    </cfoutput>
-                                </cfsavecontent>
-                                <cfoutput> #vn#</cfoutput>
+                                    </cfoutput> 
                             </cfloop>
                         
                         </tbody>
