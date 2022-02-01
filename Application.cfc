@@ -11,7 +11,6 @@
 	<cfargument name="TargetPage" type="string" required="true" hint="The requested ColdFusion template." />
     <cfif StructKeyExists(session,"dataLoggedIn") eq "NO">
         <cfinclude template="index.cfm">
-
     <cfelse>
         <cfinclude template="page.cfm">
     </cfif>

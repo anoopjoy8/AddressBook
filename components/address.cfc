@@ -8,7 +8,7 @@
             DELETE FROM address_contacts WHERE id= <CFQUERYPARAM VALUE="#url.delete#">;
         </cfquery>
 
-        <cflocation url = "http://127.0.0.1:8500/tasks/addressbook/page.cfm" addToken = "no"> 
+        <cflocation url = "page.cfm" addToken = "no"> 
      </cffunction>
 
     <cffunction  name="view">
@@ -71,14 +71,34 @@
             <cfscript> errorStruct.error.insert("5",'Please provide correct email',true);  </cfscript>
             <cfscript> errorStruct.val.insert("email",'#arguments.email#',true);  </cfscript>
         <cfelse>
-             <cfscript> errorStruct.val.insert("email",'#arguments.email#',true);  </cfscript>
+            <cfscript> errorStruct.val.insert("email",'#arguments.email#',true);  </cfscript>
+                <!--- Check existance --->
+            <cfquery name="check_email" datasource="cold" result="xResult">
+                SELECT * FROM address_contacts
+                WHERE email= <CFQUERYPARAM VALUE="#arguments.email#"  cfsqltype="cf_sql_varchar">;
+            </cfquery>
+            <cfif StructIsEmpty(xResult) EQ "false">
+                    <cfscript> errorStruct.error.insert("5",'Email already exist',true);  </cfscript>
+            </cfif>
+
         </cfif>
+
+            
+
         <!--- validate phone --->
         <cfif arguments.phno EQ "">
             <cfscript> errorStruct.error.insert("6",'Please enter Phone no',true);  </cfscript>
             <cfscript> errorStruct.val.insert("phone",'#arguments.phno#',true);  </cfscript>
         <cfelse>
             <cfscript> errorStruct.val.insert("phone",'#arguments.phno#',true);  </cfscript>
+            <!--- Check existance --->
+            <cfquery name="check_phone" datasource="cold" result="pResult">
+                SELECT * FROM address_contacts
+                WHERE phone= <CFQUERYPARAM VALUE="#arguments.phno#"  cfsqltype="cf_sql_varchar">;
+            </cfquery>
+            <cfif StructIsEmpty(pResult) EQ "false">
+                    <cfscript> errorStruct.error.insert("6",'Phone no already exist',true);  </cfscript>
+            </cfif>
         </cfif>
         <!--- validate address --->
         <cfif arguments.address EQ "">
@@ -114,9 +134,15 @@
 
             <cfquery name="signupq" datasource="cold" result="sResult">
                 INSERT INTO address_contacts (fname,sname,email,phone,gender,dob,photo,address,street_name)
-                VALUES (<CFQUERYPARAM VALUE="#arguments.fname#">,<CFQUERYPARAM VALUE="#arguments.sname#">,<CFQUERYPARAM VALUE="#arguments.email#">,<CFQUERYPARAM VALUE="#arguments.phno#">
-                ,<CFQUERYPARAM VALUE="#arguments.gender#">,<CFQUERYPARAM VALUE="#DateFormat(arguments.dob,'yyyy-mm-dd')#">,<CFQUERYPARAM VALUE="#fileUploadResult.clientFile#">,
-                <CFQUERYPARAM VALUE="#arguments.address#">,<CFQUERYPARAM VALUE="#arguments.street#">);
+                VALUES (<CFQUERYPARAM VALUE="#arguments.fname#"  cfsqltype="cf_sql_varchar">,
+                        <CFQUERYPARAM VALUE="#arguments.sname#"  cfsqltype="cf_sql_varchar">,
+                        <CFQUERYPARAM VALUE="#arguments.email#"  cfsqltype="cf_sql_varchar">,
+                        <CFQUERYPARAM VALUE="#arguments.phno#"   cfsqltype="cf_sql_numeric">,
+                        <CFQUERYPARAM VALUE="#arguments.gender#">,
+                        <CFQUERYPARAM VALUE="#DateFormat(arguments.dob,'yyyy-mm-dd')#" cfsqltype="CF_SQL_DATE">,
+                        <CFQUERYPARAM VALUE="#fileUploadResult.clientFile#" cfsqltype="cf_sql_varchar">,
+                        <CFQUERYPARAM VALUE="#arguments.address#" cfsqltype="cf_sql_varchar">,
+                        <CFQUERYPARAM VALUE="#arguments.street#"  cfsqltype="cf_sql_varchar">);
             </cfquery>
 
             
@@ -225,7 +251,16 @@
                 nameConflict = makeunique
             >
             <cfquery name="updates" datasource="cold" result="sResult">
-                UPDATE address_contacts SET fname= <CFQUERYPARAM VALUE="#arguments.fname#">,sname = <CFQUERYPARAM VALUE="#arguments.sname#">,email = <CFQUERYPARAM VALUE="#arguments.email#">,phone = <CFQUERYPARAM VALUE="#arguments.phno#">, gender = <CFQUERYPARAM VALUE="#arguments.gender#">,dob = <CFQUERYPARAM VALUE="#DateFormat(arguments.dob,'yyyy-mm-dd')#">,address = <CFQUERYPARAM VALUE="#arguments.address#">,street_name= <CFQUERYPARAM VALUE="#arguments.street#"> WHERE id=#url.edit#;
+                UPDATE address_contacts SET 
+                fname= <CFQUERYPARAM VALUE="#arguments.fname#"    cfsqltype="cf_sql_varchar">,
+                sname = <CFQUERYPARAM VALUE="#arguments.sname#"   cfsqltype="cf_sql_varchar">,
+                email = <CFQUERYPARAM VALUE="#arguments.email#"   cfsqltype="cf_sql_varchar">,
+                phone = <CFQUERYPARAM VALUE="#arguments.phno#"    cfsqltype="cf_sql_varchar">,
+                gender = <CFQUERYPARAM VALUE="#arguments.gender#">,
+                dob = <CFQUERYPARAM VALUE="#DateFormat(arguments.dob,'yyyy-mm-dd')#" cfsqltype="cf_sql_date">,
+                address = <CFQUERYPARAM VALUE="#arguments.address#"   cfsqltype="cf_sql_varchar">,
+                street_name= <CFQUERYPARAM VALUE="#arguments.street#" cfsqltype="cf_sql_varchar"> 
+                WHERE id=#url.edit#;
             </cfquery>
 
             <cfreturn errorStruct>    
