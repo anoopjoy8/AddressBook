@@ -1,5 +1,6 @@
 <cfset errorStructlog = {}/>
 <cfset status         = ""/>
+<cfset validating     = createObject("component",'components/authentication')/>
 <cfif structKeyExists(form, 'submit')> 
   <cfset validating            = createObject("component",'components/authentication')/>
   <cfset errorStructlog        = validating.validateUser(form.username,form.pass) />
@@ -51,12 +52,12 @@
   <div class="card-body p-4 p-sm-5">
     <h5 class="card-title text-center mb-5">Login</h5>
     <cfoutput>
-        <form method="post">
+        <form method="post"   method="post" onsubmit="myFunction(event)">
           <div class="form-floating mb-3">
-            <input type="text" name="username" class="form-control" id="floatingInput" placeholder="Username/Email"> <cfif structKeyExists(errorStructlog, 1)> <span class="err">#errorStructlog.1#</span> </cfif>
+            <input type="text" name="username" class="form-control" id="floatingInput" placeholder="Username/Email"> <cfif structKeyExists(errorStructlog, 1)> <span class="err" id="er1">#errorStructlog.1#</span> </cfif>
           </div>
           <div class="form-floating mb-3">
-            <input type="password" name="pass" class="form-control" id="floatingPassword" placeholder="Password"> <cfif structKeyExists(errorStructlog, 2)> <span class="err">#errorStructlog.2#</span> </cfif>
+            <input type="password" name="pass" class="form-control" id="floatingPassword" placeholder="Password"> <cfif structKeyExists(errorStructlog, 2)> <span class="err" id="er2">#errorStructlog.2#</span> </cfif>
           </div>
           <cfif status eq "false">
               <span class="err"> Invalid Credentials! </span>
@@ -178,5 +179,17 @@
 <script src="http://127.0.0.1:8500/tasks/addressbook/public/adminlte.min.js"></script>
 <!-- AdminLTE for demo purposes -->
 <script src="http://127.0.0.1:8500/tasks/addressbook/public/demo.js"></script>
+
+<script>
+function myFunction(event) {
+  var email  = document.getElementById('floatingInput').value;
+  var pass   = document.getElementById('floatingPassword').value;
+  if((email == "") || (pass == "")){
+           event.preventDefault();       
+  }
+
+  
+}
+</script>
 </body>
 </html>

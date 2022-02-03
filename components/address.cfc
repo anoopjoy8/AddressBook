@@ -40,45 +40,45 @@
         <cfset errorStruct.insert("modalstat2",'hide',true)/>
         <!--- validate fullname --->
         <cfif arguments.fname EQ "">
-            <cfscript> errorStruct.error.insert("1",'Please enter full name',true);  </cfscript>
-            <cfscript> errorStruct.val.insert("fname",'#arguments.fname#',true);  </cfscript>
+            <cfset  errorStruct.error.insert("1",'Please enter full name',true) />
+            <cfset  errorStruct.val.insert("fname",'#arguments.fname#',true)  />
         <cfelse>
-             <cfscript> errorStruct.val.insert("fname",'#arguments.fname#',true);  </cfscript>
+             <cfset errorStruct.val.insert("fname",'#arguments.fname#',true) />
         </cfif>
         <!--- validate secondname --->
         <cfif arguments.sname EQ "">
-            <cfscript> errorStruct.error.insert("2",'Please enter second name',true);  </cfscript>
-            <cfscript> errorStruct.val.insert("sname",'#arguments.sname#',true);  </cfscript>
+            <cfset errorStruct.error.insert("2",'Please enter second name',true) />
+            <cfset errorStruct.val.insert("sname",'#arguments.sname#',true) />
         <cfelse>
-             <cfscript> errorStruct.val.insert("sname",'#arguments.sname#',true);  </cfscript>
+            <cfset errorStruct.val.insert("sname",'#arguments.sname#',true) />
         </cfif>
         <!--- validate gender --->
         <cfif arguments.gender EQ "">
-            <cfscript> errorStruct.error.insert("3",'Please select a gender',true);  </cfscript>
-            <cfscript> errorStruct.val.insert("gender",'#arguments.gender#',true);  </cfscript>
+            <cfset errorStruct.error.insert("3",'Please select a gender',true)  />
+            <cfset errorStruct.val.insert("gender",'#arguments.gender#',true)  />
         <cfelse>
-             <cfscript> errorStruct.val.insert("gender",'#arguments.gender#',true);  </cfscript>
+            <cfset errorStruct.val.insert("gender",'#arguments.gender#',true) />
         </cfif>
         <!--- validate dob --->
         <cfif arguments.dob EQ "">
-            <cfscript> errorStruct.error.insert("4",'Please enter DOB',true);  </cfscript>
-            <cfscript> errorStruct.val.insert("dob",'#arguments.dob#',true);  </cfscript>
+            <cfset errorStruct.error.insert("4",'Please enter DOB',true) />
+            <cfset errorStruct.val.insert("dob",'#arguments.dob#',true) />
         <cfelse>
-            <cfscript> errorStruct.val.insert("dob",'#arguments.dob#',true);  </cfscript>
+            <cfset errorStruct.val.insert("dob",'#arguments.dob#',true) />
         </cfif>
         <!--- validate email --->
         <cfif Not isValid('email',arguments.email)>
-            <cfscript> errorStruct.error.insert("5",'Please provide correct email',true);  </cfscript>
-            <cfscript> errorStruct.val.insert("email",'#arguments.email#',true);  </cfscript>
+            <cfset errorStruct.error.insert("5",'Please provide correct email',true) />
+            <cfset errorStruct.val.insert("email",'#arguments.email#',true) />
         <cfelse>
-            <cfscript> errorStruct.val.insert("email",'#arguments.email#',true);  </cfscript>
+            <cfset errorStruct.val.insert("email",'#arguments.email#',true) />
                 <!--- Check existance --->
             <cfquery name="check_email" datasource="cold" result="xResult">
                 SELECT * FROM address_contacts
                 WHERE email= <CFQUERYPARAM VALUE="#arguments.email#"  cfsqltype="cf_sql_varchar">;
             </cfquery>
-            <cfif StructIsEmpty(xResult) EQ "false">
-                    <cfscript> errorStruct.error.insert("5",'Email already exist',true);  </cfscript>
+            <cfif xResult.recordcount NEQ 0>
+                <cfset errorStruct.error.insert("5",'Email already exist',true) />
             </cfif>
 
         </cfif>
@@ -87,40 +87,40 @@
 
         <!--- validate phone --->
         <cfif arguments.phno EQ "">
-            <cfscript> errorStruct.error.insert("6",'Please enter Phone no',true);  </cfscript>
-            <cfscript> errorStruct.val.insert("phone",'#arguments.phno#',true);  </cfscript>
+            <cfset  errorStruct.error.insert("6",'Please enter Phone no',true)  />
+            <cfset  errorStruct.val.insert("phone",'#arguments.phno#',true)  />
         <cfelse>
-            <cfscript> errorStruct.val.insert("phone",'#arguments.phno#',true);  </cfscript>
+            <cfset  errorStruct.val.insert("phone",'#arguments.phno#',true)  />
             <!--- Check existance --->
             <cfquery name="check_phone" datasource="cold" result="pResult">
                 SELECT * FROM address_contacts
                 WHERE phone= <CFQUERYPARAM VALUE="#arguments.phno#"  cfsqltype="cf_sql_varchar">;
             </cfquery>
-            <cfif StructIsEmpty(pResult) EQ "false">
-                    <cfscript> errorStruct.error.insert("6",'Phone no already exist',true);  </cfscript>
+            <cfif pResult.recordcount NEQ 0>
+                    <cfset  errorStruct.error.insert("6",'Phone no already exist',true) />
             </cfif>
         </cfif>
         <!--- validate address --->
         <cfif arguments.address EQ "">
-            <cfscript> errorStruct.error.insert("7",'Please enter address',true);  </cfscript>
-            <cfscript> errorStruct.val.insert("address",'#arguments.address#',true);  </cfscript>
+            <cfset  errorStruct.error.insert("7",'Please enter address',true)    />
+            <cfset  errorStruct.val.insert("address",'#arguments.address#',true) />
         <cfelse>
-             <cfscript> errorStruct.val.insert("address",'#arguments.address#',true);  </cfscript>
+            <cfset errorStruct.val.insert("address",'#arguments.address#',true) />
         </cfif>
         <!--- validate street --->
         <cfif arguments.street EQ "">
-            <cfscript> errorStruct.error.insert("8",'Please enter street address',true);  </cfscript>
-            <cfscript> errorStruct.val.insert("street",'#arguments.street#',true);  </cfscript>
+            <cfset  errorStruct.error.insert("8",'Please enter street address',true)  />
+            <cfset  errorStruct.val.insert("street",'#arguments.street#',true) />
         <cfelse>
-            <cfscript> errorStruct.val.insert("street",'#arguments.street#',true);  </cfscript>
+            <cfset  errorStruct.val.insert("street",'#arguments.street#',true)  />
         </cfif>
-        <cfscript> errorStruct.val.insert("photo",'#arguments.image#',true);  </cfscript>
+        <cfset      errorStruct.val.insert("photo",'#arguments.image#',true) />
         <cfif StructIsEmpty(errorStruct.error) EQ "false">
-             <cfscript> errorStruct.insert("modalstat",'show',true);  </cfscript>
+            <cfset errorStruct.insert("modalstat",'show',true)  />
             <cfreturn errorStruct>
         <cfelse>
         
-            <cfscript> errorStruct.insert("modalstat",'hide',true);  </cfscript>
+            <cfset errorStruct.insert("modalstat",'hide',true)  />
             <cffile 
                 action = "upload" 
                 fileField = "image" 
@@ -181,67 +181,85 @@
         <cfset errorStruct.insert("modalstat2",'hide',true)/>
         <!--- validate fullname --->
         <cfif arguments.fname EQ "">
-            <cfscript> errorStruct.error.insert("1",'Please enter full name',true);  </cfscript>
-            <cfscript> errorStruct.val.insert("fname",'#arguments.fname#',true);  </cfscript>
+            <cfset  errorStruct.error.insert("1",'Please enter full name',true) />
+            <cfset  errorStruct.val.insert("fname",'#arguments.fname#',true) />
         <cfelse>
-             <cfscript> errorStruct.val.insert("fname",'#arguments.fname#',true);  </cfscript>
+            <cfset  errorStruct.val.insert("fname",'#arguments.fname#',true) />
         </cfif>
         <!--- validate secondname --->
         <cfif arguments.sname EQ "">
-            <cfscript> errorStruct.error.insert("2",'Please enter second name',true);  </cfscript>
-            <cfscript> errorStruct.val.insert("sname",'#arguments.sname#',true);  </cfscript>
+            <cfset errorStruct.error.insert("2",'Please enter second name',true)  />
+            <cfset errorStruct.val.insert("sname",'#arguments.sname#',true) />
         <cfelse>
-             <cfscript> errorStruct.val.insert("sname",'#arguments.sname#',true);  </cfscript>
+            <cfset errorStruct.val.insert("sname",'#arguments.sname#',true) />
         </cfif>
         <!--- validate gender --->
         <cfif arguments.gender EQ "">
-            <cfscript> errorStruct.error.insert("3",'Please select a gender',true);  </cfscript>
-            <cfscript> errorStruct.val.insert("gender",'#arguments.gender#',true);  </cfscript>
+            <cfset  errorStruct.error.insert("3",'Please select a gender',true)  />
+            <cfset  errorStruct.val.insert("gender",'#arguments.gender#',true)  />
         <cfelse>
-             <cfscript> errorStruct.val.insert("gender",'#arguments.gender#',true);  </cfscript>
+            <cfset  errorStruct.val.insert("gender",'#arguments.gender#',true)  />
         </cfif>
         <!--- validate dob --->
         <cfif arguments.dob EQ "">
-            <cfscript> errorStruct.error.insert("4",'Please enter DOB',true);  </cfscript>
-            <cfscript> errorStruct.val.insert("dob",'#arguments.dob#',true);  </cfscript>
+            <cfset errorStruct.error.insert("4",'Please enter DOB',true) />
+            <cfset errorStruct.val.insert("dob",'#arguments.dob#',true) />
         <cfelse>
-            <cfscript> errorStruct.val.insert("dob",'#arguments.dob#',true);  </cfscript>
+            <cfset errorStruct.val.insert("dob",'#arguments.dob#',true) />
         </cfif>
         <!--- validate email --->
         <cfif Not isValid('email',arguments.email)>
-            <cfscript> errorStruct.error.insert("5",'Please provide correct email',true);  </cfscript>
-            <cfscript> errorStruct.val.insert("email",'#arguments.email#',true);  </cfscript>
+            <cfset errorStruct.error.insert("5",'Please provide correct email',true) />
+            <cfset errorStruct.val.insert("email",'#arguments.email#',true) />
         <cfelse>
-             <cfscript> errorStruct.val.insert("email",'#arguments.email#',true);  </cfscript>
+            <cfset errorStruct.val.insert("email",'#arguments.email#',true) />
+                <!--- Check existance --->
+            <cfquery name="check_email" datasource="cold" result="xResult">
+                SELECT * FROM address_contacts
+                WHERE email= <CFQUERYPARAM VALUE="#arguments.email#"  cfsqltype="cf_sql_varchar"> And id <> 
+                            <CFQUERYPARAM VALUE="#url.edit#"  cfsqltype="cf_sql_INTEGER"> ;
+            </cfquery>
+            <cfif xResult.recordcount NEQ 0>
+                    <cfset errorStruct.error.insert("5",'Email already exist',true) />
+            </cfif>
         </cfif>
         <!--- validate phone --->
         <cfif arguments.phno EQ "">
-            <cfscript> errorStruct.error.insert("6",'Please enter Phone no',true);  </cfscript>
-            <cfscript> errorStruct.val.insert("phone",'#arguments.phno#',true);  </cfscript>
+            <cfset errorStruct.error.insert("6",'Please enter Phone no',true)  />
+            <cfset errorStruct.val.insert("phone",'#arguments.phno#',true)  />
         <cfelse>
-            <cfscript> errorStruct.val.insert("phone",'#arguments.phno#',true);  </cfscript>
+            <cfset errorStruct.val.insert("phone",'#arguments.phno#',true)  />
+            <!--- Check existance --->
+            <cfquery name="check_phone" datasource="cold" result="pResult">
+                SELECT * FROM address_contacts
+                WHERE phone= <CFQUERYPARAM VALUE="#arguments.phno#"  cfsqltype="cf_sql_varchar"> And id <> 
+                             <CFQUERYPARAM VALUE="#url.edit#"  cfsqltype="cf_sql_INTEGER">;
+            </cfquery>
+            <cfif pResult.recordcount NEQ 0>
+                    <cfset errorStruct.error.insert("6",'Phone no already exist',true) />
+            </cfif>
         </cfif>
         <!--- validate address --->
         <cfif arguments.address EQ "">
-            <cfscript> errorStruct.error.insert("7",'Please enter address',true);  </cfscript>
-            <cfscript> errorStruct.val.insert("address",'#arguments.address#',true);  </cfscript>
+            <cfset  errorStruct.error.insert("7",'Please enter address',true)  />
+            <cfset  errorStruct.val.insert("address",'#arguments.address#',true) />
         <cfelse>
-             <cfscript> errorStruct.val.insert("address",'#arguments.address#',true);  </cfscript>
+             <cfset errorStruct.val.insert("address",'#arguments.address#',true)  />
         </cfif>
         <!--- validate street --->
         <cfif arguments.street EQ "">
-            <cfscript> errorStruct.error.insert("8",'Please enter street address',true);  </cfscript>
-            <cfscript> errorStruct.val.insert("street",'#arguments.street#',true);  </cfscript>
+            <cfset  errorStruct.error.insert("8",'Please enter street address',true)  />
+            <cfset  errorStruct.val.insert("street",'#arguments.street#',true)  />
         <cfelse>
-            <cfscript> errorStruct.val.insert("street",'#arguments.street#',true);  </cfscript>
+            <cfset  errorStruct.val.insert("street",'#arguments.street#',true) />
         </cfif>
-        <cfscript> errorStruct.val.insert("photo",'#arguments.image#',true);  </cfscript>
+        <cfset  errorStruct.val.insert("photo",'#arguments.image#',true)  />
         <cfif StructIsEmpty(errorStruct.error) EQ "false">
-             <cfscript> errorStruct.insert("modalstat",'show',true);  </cfscript>
+             <cfset errorStruct.insert("modalstat",'show',true) />
             <cfreturn errorStruct>
         <cfelse>
         
-            <cfscript> errorStruct.insert("modalstat",'hide',true);  </cfscript>
+            <cfset  errorStruct.insert("modalstat",'hide',true) />
             <cffile 
                 action = "upload" 
                 fileField = "image" 

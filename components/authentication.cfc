@@ -6,11 +6,11 @@
         <cfset var errorStructlog = {} />
         <!--- validate email --->
         <cfif arguments.username EQ "">
-            <cfscript> errorStructlog.insert("1",'Please enter username or email',true);  </cfscript>
+            <cfset errorStructlog.insert("1",'Please enter username or email',true) />
         </cfif>
         <!--- validate pass --->
         <cfif arguments.pass EQ "">
-            <cfscript> errorStructlog.insert("2",'Please enter password',true);  </cfscript>
+            <cfset errorStructlog.insert("2",'Please enter password',true)/>
         </cfif>
         <cfreturn errorStructlog>
     </cffunction>
@@ -26,11 +26,11 @@
         <cfset var errorStruct = {} />
         <!--- validate fullname --->
         <cfif arguments.fullname EQ "">
-            <cfscript> errorStruct.insert("1",'Please enter fullname',true);  </cfscript>
+            <cfset errorStruct.insert("1",'Please enter fullname',true) />
         </cfif>
         <!--- validate email --->
         <cfif Not isValid('email',arguments.email)>
-            <cfscript> errorStruct.insert("2",'Please provide correct email',true);  </cfscript>
+            <cfset errorStruct.insert("2",'Please provide correct email',true) />
         <cfelse>
              <!--- Check existance --->
             <cfquery name="check_email" datasource="cold" result="xResult">
@@ -38,25 +38,25 @@
                 WHERE email= <CFQUERYPARAM VALUE="#arguments.email#"  cfsqltype="cf_sql_varchar">;
             </cfquery>
             <cfif StructIsEmpty(xResult) EQ "false">
-                    <cfscript> errorStruct.error.insert("2",'Email already exist',true);  </cfscript>
+                <cfset  errorStruct.error.insert("2",'Email already exist',true) />
             </cfif>
         </cfif>
         <!--- validate username --->
         <cfif arguments.username EQ "">
-            <cfscript> errorStruct.insert("3",'Please enter username',true);  </cfscript>
+            <cfset  errorStruct.insert("3",'Please enter username',true) />
         </cfif>
         <!--- validate pass --->
         <cfif arguments.pass EQ "">
-            <cfscript> errorStruct.insert("4",'Please enter password',true);  </cfscript>
+            <cfset errorStruct.insert("4",'Please enter password',true) />
         </cfif>
         <!--- validate pass2 --->
         <cfif arguments.pass2 EQ "">
-            <cfscript> errorStruct.insert("5",'Please enter confirm password',true);  </cfscript>
+            <cfset errorStruct.insert("5",'Please enter confirm password',true) />
         </cfif>
 
         <!--- validate pass1&pass2 --->
         <cfif arguments.pass NEQ arguments.pass2>
-            <cfscript> errorStruct.insert("6",'Password must match',true);  </cfscript>
+            <cfset  errorStruct.insert("6",'Password must match',true)  />
         </cfif>
         <cfreturn errorStruct>
     </cffunction>
@@ -72,7 +72,10 @@
         <cfset var loggedIn = false>
         <cfquery name="signupq" datasource="cold" result="sResult">
             INSERT INTO address_users (name,user_name,email,password)
-            VALUES ('#arguments.fullname#', '#arguments.username#', '#arguments.email#', '#arguments.pass#');
+            VALUES (<CFQUERYPARAM VALUE="#arguments.fullname#"  cfsqltype="cf_sql_varchar">, 
+                    <CFQUERYPARAM VALUE="#arguments.username#"  cfsqltype="cf_sql_varchar">,
+                    <CFQUERYPARAM VALUE="#arguments.email#"     cfsqltype="cf_sql_varchar">, 
+                    <CFQUERYPARAM VALUE="#arguments.pass#"      cfsqltype="cf_sql_varchar">);
         </cfquery>
 
         <cfif sResult.GENERATEDKEY neq "">
@@ -92,7 +95,9 @@
         <cfargument  name="uname"   type="string" required="true">
         <cfargument  name="psw"     type="string" required="true">
         <cfset var loggedIn = false>
-        <cfset   login_check = ormExecuteQuery( "FROM Loginorm WHERE user_name = '#arguments.uname#' or email = '#arguments.uname#' and password='#arguments.psw#' " ) /> 
+        <cfset   login_check = ormExecuteQuery( "FROM Loginorm WHERE user_name = '#arguments.uname#' 
+                                                                     or email = '#arguments.uname#' 
+                                                                     and password='#arguments.psw#' " ) /> 
         <cfif arrayIsEmpty(login_check ) EQ  "no">
             <cfset session.dataLoggedIn = {'username'=login_check[1].user_name,'log_id'=login_check[1].id,'name'=login_check[1].name}>
             <cfset var loggedIn = true>

@@ -6,16 +6,18 @@
     <cfset this.ormSettings = { logsql : true } />
     <cfset this.invokeImplicitAccessor = true />
 
-   <cffunction name="OnRequest" access="public" returntype="boolean" output="true" hint="Executes the requested ColdFusion template.">
-	<!--- Define arguments. --->
-	<cfargument name="TargetPage" type="string" required="true" hint="The requested ColdFusion template." />
-    <cfif StructKeyExists(session,"dataLoggedIn") eq "NO">
-        <cfinclude template="index.cfm">
-    <cfelse>
-        <cfinclude template="page.cfm">
-    </cfif>
+    <cffunction name="onRequest" access="public" returntype="boolean" output="true" hint="Executes the requested ColdFusion template.">
+        <!--- Define arguments. --->
+        <cfargument name="TargetPage" type="string" required="true" hint="The requested ColdFusion template." />
+        <cfif cgi.script_name eq "/tasks/addressbook/sign-up.cfm">
+            <cfinclude template="sign-up.cfm"> 
+        <cfelseif StructKeyExists(session,"dataLoggedIn") eq "NO">
+            <cfinclude template="index.cfm">
+        <cfelse>
+            <cfinclude template="page.cfm">
+        </cfif>
+        <cfreturn true />
+    </cffunction>
 
-	<!--- Return out. --->
-	<cfreturn true />
-</cffunction>
+
 </cfcomponent>

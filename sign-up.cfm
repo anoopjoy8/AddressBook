@@ -2,12 +2,12 @@
 <cfset status      = ""/>
 <cfif structKeyExists(form, 'register')> 
     <cfscript> 
-      validating            = createObject("component",'authentication');
+      validating            = createObject("component",'components/authentication');
       errorStruct           = validating.validateUsersignup(form.name,form.username,form.email,form.password,form.pass2);
       isEmpty               = StructIsEmpty(errorStruct);
     </cfscript>
     <cfif isEmpty eq "Yes">
-      <cfset authentication    = createObject("component",'authentication')/>
+      <cfset authentication    = createObject("component",'components/authentication')/>
       <cfset status            = authentication.SignupMethod(form.name,form.username,form.email,form.password,form.pass2)/>
     </cfif>
     <cfif status eq "YES">
