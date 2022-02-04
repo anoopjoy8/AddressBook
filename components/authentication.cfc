@@ -97,7 +97,7 @@
         <cfset var loggedIn = false>
         <cfset   login_check = ormExecuteQuery( "FROM Loginorm WHERE user_name = '#arguments.uname#' 
                                                                      or email = '#arguments.uname#' 
-                                                                     and password='#arguments.psw#' " ) /> 
+                                                                     and password='#arguments.psw#'" ) /> 
         <cfif arrayIsEmpty(login_check ) EQ  "no">
             <cfset session.dataLoggedIn = {'username'=login_check[1].user_name,'log_id'=login_check[1].id,'name'=login_check[1].name}>
             <cfset var loggedIn = true>
@@ -149,24 +149,21 @@
         <cfargument name="firstName">
         <cfargument name="lastName">
         
-
-            <cfset   login_check = ormExecuteQuery( "FROM Loginorm WHERE email = '#arguments.emailId#'" ) />
-            <cfif arrayIsEmpty(login_check ) EQ  "yes">
-                <cfset  address_contacts = new LoginOrm()/>
-                <cfset  address_contacts.setname("#arguments.firstName#")/>
-                <cfset  address_contacts.setuser_name("#arguments.firstName#")/>
-                <cfset  address_contacts.setemail("#arguments.emailId#")/>
-                <cfset EntitySave(address_contacts) />
-                
-                <cfset   login_check = ormExecuteQuery( "FROM Loginorm WHERE id = '#address_contacts.getid()#'" ) />
-                <cfif arrayIsEmpty(login_check ) EQ  "no">
-                    <cfset session.dataLoggedIn = {'username'=login_check[1].user_name,'log_id'=login_check[1].id,'name'=login_check[1].name}>
-                    
-                </cfif>
-            <cfelse>
-                <cfset session.dataLoggedIn = {'username'=login_check[1].user_name,'log_id'=login_check[1].id,'name'=login_check[1].name}>
+        <cfset   login_check = ormExecuteQuery( "FROM Loginorm WHERE email = '#arguments.emailId#'" ) />
+        <cfif arrayIsEmpty(login_check ) EQ  "yes">
+            <cfset  address_contacts = new LoginOrm()/>
+            <cfset  address_contacts.setname("#arguments.firstName#")/>
+            <cfset  address_contacts.setuser_name("#arguments.firstName#")/>
+            <cfset  address_contacts.setemail("#arguments.emailId#")/>
+            <cfset EntitySave(address_contacts) />
             
-            </cfif>
+            <cfset   login_check = ormExecuteQuery( "FROM Loginorm WHERE id = '#address_contacts.getid()#'" ) />
+                <cfif arrayIsEmpty(login_check ) EQ  "no">
+                    <cfset session.dataLoggedIn = {'username'=login_check[1].user_name,'log_id'=login_check[1].id,'name'=login_check[1].name}>    
+                </cfif>
+        <cfelse>
+            <cfset session.dataLoggedIn = {'username'=login_check[1].user_name,'log_id'=login_check[1].id,'name'=login_check[1].name}>
+        </cfif>
         
         
 

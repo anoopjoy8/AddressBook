@@ -121,14 +121,19 @@
         <cfelse>
         
             <cfset errorStruct.insert("modalstat",'hide',true)  />
-            <cffile 
-                action = "upload" 
-                fileField = "image" 
-                destination="F:\Coldfushion\cfusion\wwwroot\tasks\addressbook\public\files"
-                allowedExtensions="jpg"
-                result='fileUploadResult'
-                nameConflict = makeunique
-            >
+            <cfif arguments.image NEQ "">
+                <cffile 
+                    action = "upload" 
+                    fileField = "image" 
+                    destination="F:\Coldfushion\cfusion\wwwroot\tasks\addressbook\public\files"
+                    allowedExtensions="jpg"
+                    result='fileUploadResult'
+                    nameConflict = makeunique
+                >
+                <cfset img = #fileUploadResult.clientFile#>
+            <cfelse>
+                <cfset img = "">
+            </cfif>
            
 
 
@@ -140,7 +145,7 @@
                         <CFQUERYPARAM VALUE="#arguments.phno#"   cfsqltype="cf_sql_numeric">,
                         <CFQUERYPARAM VALUE="#arguments.gender#">,
                         <CFQUERYPARAM VALUE="#DateFormat(arguments.dob,'yyyy-mm-dd')#" cfsqltype="CF_SQL_DATE">,
-                        <CFQUERYPARAM VALUE="#fileUploadResult.clientFile#" cfsqltype="cf_sql_varchar">,
+                        <CFQUERYPARAM VALUE="#img#" cfsqltype="cf_sql_varchar">,
                         <CFQUERYPARAM VALUE="#arguments.address#" cfsqltype="cf_sql_varchar">,
                         <CFQUERYPARAM VALUE="#arguments.street#"  cfsqltype="cf_sql_varchar">);
             </cfquery>
@@ -280,7 +285,6 @@
                 street_name= <CFQUERYPARAM VALUE="#arguments.street#" cfsqltype="cf_sql_varchar"> 
                 WHERE id=#url.edit#;
             </cfquery>
-
             <cfreturn errorStruct>    
         </cfif>
  

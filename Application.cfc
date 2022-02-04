@@ -18,6 +18,4 @@
         </cfif>
         <cfreturn true />
     </cffunction>
-
-
 </cfcomponent>
