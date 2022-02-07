@@ -4,69 +4,35 @@
 <cfset headtitle               = "Add Contact" />
 <cfset errorStruct.modalstat   = 'hide'/>
 <cfset errorStruct.modalstat2  = 'hide'/>
-<cfset errorStruct.val.fname   =""/>
-<cfset errorStruct.val.sname   =""/>
-<cfset errorStruct.val.gender  ="male"/>
-<cfset errorStruct.val.email   =""/>
-<cfset errorStruct.val.dob     =""/>
-<cfset errorStruct.val.phone   =""/>
-<cfset errorStruct.val.address =""/>
-<cfset errorStruct.val.street  =""/>
-<cfset errorStruct.val.photo   =""/>
+<cfset fname   =""/>
+<cfset sname   =""/>
+<cfset gender  ="male"/>
+<cfset email   =""/>
+<cfset dob     =""/>
+<cfset phone   =""/>
+<cfset address =""/>
+<cfset street  =""/>
+<cfset photo   =""/>
+<cfset u_id    =""/>
 
 <cfset get_users = EntityLoad("giggidy") />
 
-<cfif structKeyExists(form, 'submit')>  
-    <cfset addmethod      = createObject("component",'components/address')/>
-    <cfset errorStruct    = addmethod.add(form.fname,form.sname,form.gender,form.dob,form.email,form.phno,form.image,form.address,form.street) />            
-</cfif>
-
-<cfif structKeyExists(url, 'add')> 
-    <cfset errorStruct.modalstat = 'show'/>    
-</cfif>
-
-<cfif structKeyExists(url, 'edit')> 
-    <cfset headtitle = "Edit Contact" />
-    <cfset errorStruct.modalstat = 'show'/>
-    <cfset get_one     = createObject("component",'components/address')/>
-    <cfset errorStruct = get_one.get_det(url.edit) />   
-</cfif>
-
-<cfif structKeyExists(form, 'updatesubmit')>  
-    <cfset updatemethod   = createObject("component",'components/address')/>
-    <cfset errorStruct    = updatemethod.update(form.fname,form.sname,form.gender,form.dob,form.email,form.phno,form.image,form.address,form.street) />          
-</cfif>
-
-<cfif structKeyExists(url, 'delete')>  
-    <cfset deletemethod   = createObject("component",'components/address')/>
-    <cfset errorStruct    = deletemethod.delete(url.delete) />            
-</cfif>
-
-<cfif structKeyExists(url, 'view')>  
-    <cfset headtitle = "Contact Details" />
-    <cfset viewmethod     = createObject("component",'components/address')/>
-    <cfset errorStruct    = viewmethod.view(url.view) />          
-</cfif>
-
-<cfif structKeyExists(url, 'pdf')>  
-    <cfset pdfmethod      = createObject("component",'components/address')/>
-    <cfset pdfmethod.pdfdownload() />
-</cfif>
-
-<cfif structKeyExists(url, 'excel')>  
-    <cfset excelmethod      = createObject("component",'components/address')/>
-    <cfset excelmethod.exceldownload() />  
-</cfif>
-
-<cfif structKeyExists(url, 'print')>  
-     <cfset printmethod      = createObject("component",'components/address')/>
-     <cfset printmethod.print() />
-   
-</cfif>
-
-<cfif structKeyExists(url, 'logout')>  
-    <cfset logoutmethod      = createObject("component",'components/authentication')/>
-    <cfset logoutmethod.logoutMethod() />  
+<!--- for error msg --->
+<cfif structKeyExists(url, 'status')>
+    <cfif url.status NEQ "view">
+        <cfset errorStruct.modalstat   = 'show'/>
+    <cfelse>
+        <cfset errorStruct.modalstat2  = 'show'/>
+    </cfif>
+    <cfset fname   ="#url.fname#"/>
+    <cfset sname   ="#url.sname#"/>
+    <cfset gender  ="#url.gender#"/>
+    <cfset dob     ="#url.dob#"/>
+    <cfset email   ="#url.email#"/>
+    <cfset phone   ="#url.phno#"/>
+    <cfset address ="#url.address#"/>
+    <cfset street  ="#url.street#"/>
+    <cfset u_id    ="#url.u_id#"/>
 </cfif>
 
 <!DOCTYPE html>
@@ -83,19 +49,18 @@
   <link href="http://127.0.0.1:8500/tasks/addressbook/public/css/datepicker/datepicker3.css" rel="stylesheet" />
 </head>
 <body>
- 
         <cfinclude template = "header.cfm">
         <div class="newnav">
         <nav class="nav navbar-white bg-white justify-content-end navonly">
             <ul class="nav">
                 <li class="nav-item">
-                    <a class="nav-link active" href="http://127.0.0.1:8500/tasks/addressbook/page.cfm?pdf"><img src="http://127.0.0.1:8500/tasks/addressbook/public/images/pdf.png" alt="Girl in a jacket" width="50" height="50"></a>
+                    <a class="nav-link active" href="components/address.cfc?method=pdfdownload"><img src="http://127.0.0.1:8500/tasks/addressbook/public/images/pdf.png" alt="Girl in a jacket" width="50" height="50"></a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="http://127.0.0.1:8500/tasks/addressbook/page.cfm?excel"><img src="http://127.0.0.1:8500/tasks/addressbook/public/images/word.png" alt="Girl in a jacket" width="50" height="50"></a>
+                    <a class="nav-link" href="components/address.cfc?method=exceldownload"><img src="http://127.0.0.1:8500/tasks/addressbook/public/images/word.png" alt="Girl in a jacket" width="50" height="50"></a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="http://127.0.0.1:8500/tasks/addressbook/page.cfm?print"><img src="http://127.0.0.1:8500/tasks/addressbook/public/images/printer.png" alt="Girl in a jacket" width="50" height="50"></a>
+                    <a class="nav-link" href="components/address.cfc?method=print"><img src="http://127.0.0.1:8500/tasks/addressbook/public/images/printer.png" alt="Girl in a jacket" width="50" height="50"></a>
                 </li>
             </ul>
         </nav>
@@ -110,7 +75,7 @@
                     <br>
                     <br>
                     <td><!-- <button type="button" class="btn btn-outline-primary" data-toggle="modal" data-target="#modalcreate">Create Contact</button> -->
-                    <a href="http://127.0.0.1:8500/tasks/addressbook/page.cfm?add"><button type="button" class="btn btn-outline-primary">Create Contact</button> </a>
+                    <a onclick="handleAdd('ok')"><button type="button" class="btn btn-outline-primary">Create Contact</button> </a>
                     </td>
                 </div>
                 </div>
@@ -133,9 +98,9 @@
                                         <td>#x.fname#</td>
                                         <td>#x.email#</td>
                                         <td>#x.phone#</td>
-                                        <td><a href="http://127.0.0.1:8500/tasks/addressbook/page.cfm?edit=#x.id#"><button type="button"   class="btn btn-outline-primary">Edit</button></a></td>
-                                        <td><a href="http://127.0.0.1:8500/tasks/addressbook/page.cfm?delete=#x.id#"><button type="button" class="btn btn-outline-primary">Delete</button></a></td>
-                                        <td><a href="http://127.0.0.1:8500/tasks/addressbook/page.cfm?view=#x.id#"><button type="button" class="btn btn-outline-primary">View</button></a></td>
+                                        <td><a href="components/address.cfc?method=get_det&edit=#x.id#"><button type="button"   class="btn btn-outline-primary">Edit</button></a></td>
+                                        <td><a href="components/address.cfc?method=delete&delete=#x.id#"><button type="button" class="btn btn-outline-primary">Delete</button></a></td>
+                                        <td><a href="components/address.cfc?method=view&view=#x.id#""><button type="button" class="btn btn-outline-primary">View</button></a></td>
                                         </tr>
                                     </cfoutput> 
                             </cfloop>
@@ -163,14 +128,16 @@
       <!-- first section starts here -->
         <h5 class="mtitle"> Personal Contact </h5>
         <hr style="background-color: #040404;height: 1px;"/> 
-        <form  method="post" enctype="multipart/form-data">
+        <form  method="post" action="components/address.cfc?method=add" enctype="multipart/form-data" onsubmit="myFunction(event)">
             <div class="row">
                 <div class="col-md-6">
                     <div class="form-group">
                         <label for="exampleInputPassword1">First Name</label>
                         <span class="error" style="color:red;">*</span>
-                        <cfoutput>  <input type="text" class="form-control" name="fname" id="exampleInputPassword1" placeholder="Enter first name" value="#errorStruct.val.fname#">
-                        <cfif structKeyExists(errorStruct.error, 1)> <span class="err"> #errorStruct.error.1#</span> </cfif> </cfoutput>
+                        <cfoutput> 
+                            <input type="text" class="form-control" name="fname" id="fname" placeholder="Enter first name" value="#fname#">
+                            <span class="err" id="er1"></span> 
+                        </cfoutput>
                     </div>
                 </div>
 
@@ -178,10 +145,13 @@
                     <div class="form-group">
                         <label for="exampleInputPassword1">Second Name</label>
                         <span class="error" style="color:red;">*</span>
-                        <cfoutput> <input type="text" class="form-control" name="sname" id="exampleInputPassword1" placeholder="Enter second name" value="#errorStruct.val.sname#">
-                        <cfif structKeyExists(errorStruct.error, 2)> <span class="err"> #errorStruct.error.2#</span> </cfif>
-                        <input type="Hidden" name="modalstat" id="modalstat"   value="#errorStruct.modalstat#"> 
-                        <input type="Hidden" name="modalstat2" id="modalstat2" value="#errorStruct.modalstat2#"> </cfoutput>
+                        <cfoutput> 
+                            <input type="text" class="form-control" name="sname" id="sname" placeholder="Enter second name" value="#sname#">
+                            <span class="err" id="er2"></span> 
+                            <input type="Hidden" name="modalstat" id="modalstat"   value="#errorStruct.modalstat#"> 
+                            <input type="Hidden" name="modalstat2" id="modalstat2" value="#errorStruct.modalstat2#"> 
+                            <input type="Hidden" name="update_id"  id="update_id"  value="#u_id#"> 
+                        </cfoutput>
                     </div>
                 </div>
             </div>
@@ -194,9 +164,11 @@
                         <br>
                         <div class="form-check-inline">
                         <label class="form-check-label">
-                            <input type="radio" value="male"   class="form-check-input" name="gender" <cfif errorStruct.val.gender EQ "male"> checked </cfif>>Male
-                            <input type="radio" value="female" class="form-check-input" name="gender" <cfif errorStruct.val.gender EQ "female"> checked </cfif>>Female
-                            <cfoutput> <cfif structKeyExists(errorStruct.error, 3)> <span class="err"> #errorStruct.error.3#</span> </cfif> </cfoutput>
+                            <input type="radio" value="male"   class="form-check-input" name="gender" id="gender" <cfif gender EQ "male"> checked </cfif>>Male
+                            <input type="radio" value="female" class="form-check-input" name="gender" id="gender" <cfif gender EQ "female"> checked </cfif>>Female
+                            <cfoutput> 
+                                <span class="err" id="er3"></span> 
+                            </cfoutput>
                         </label>
                         </div>
                     </div>
@@ -207,8 +179,10 @@
                         <span class="error" style="color:red;">*</span>
                         <br>
                         <div class="jquery-datepicker">
-                            <cfoutput> <input type="text" class="jquery-datepicker__input datepicker1 form-control" name="dob" value="#DateFormat(errorStruct.val.dob,'dd-mm-yyyy')#">
-                            <cfif structKeyExists(errorStruct.error, 4)> <span class="err"> #errorStruct.error.4#</span> </cfif> </cfoutput>
+                            <cfoutput> 
+                                <input type="text" class="jquery-datepicker__input datepicker1 form-control" name="dob" id="dob" value="#DateFormat(dob,'dd-mm-yyyy')#">
+                                <span class="err" id="er4"></span>  
+                            </cfoutput>
                         </div>
                     </div>
                 </div>
@@ -219,8 +193,16 @@
                     <div class="form-group">
                         <label for="exampleInputPassword1">Email</label>
                         <span class="error" style="color:red;">*</span>
-                        <cfoutput><input type="email" name="email" class="form-control" id="" value="#errorStruct.val.email#" placeholder="Enter Email">
-                        <cfif structKeyExists(errorStruct.error, 5)> <span class="err"> #errorStruct.error.5#</span> </cfif> </cfoutput>
+                        <cfoutput>
+                            <input type="email" name="email" class="form-control" id="email" value="#email#" placeholder="Enter Email">
+                            <span class="err" id="er5">
+                                <cfif structKeyExists(url, 'status')> 
+                                    <cfif url.status EQ "false">
+                                         Email already exist 
+                                    </cfif>
+                                </cfif>
+                            </span> 
+                        </cfoutput>
                     </div>
                 </div>
 
@@ -228,15 +210,17 @@
                     <div class="form-group">
                         <label for="exampleInputPassword1">Phone No</label>
                         <span class="error" style="color:red;">*</span>
-                        <cfoutput> <input type="text" name="phno" class="form-control" id="" value="#errorStruct.val.phone#" placeholder="Enter Phone No">
-                        <cfif structKeyExists(errorStruct.error, 6)> <span class="err"> #errorStruct.error.6#</span> </cfif> </cfoutput>
+                        <cfoutput> 
+                            <input type="text" name="phno" class="form-control" id="phone" value="#phone#" placeholder="Enter Phone No">
+                            <span class="err" id="er6"></span> 
+                        </cfoutput>
                     </div>
                 </div>
             </div>
             <div class="row">
                 <div class="col-md-12">
                     <div class="form-group">
-                        <cfoutput> <input type="file" name="image"> #errorStruct.val.photo#</cfoutput>
+                        <cfoutput> <input type="file" name="image"> #photo#</cfoutput>
                     </div>
                 </div>
             </div>
@@ -250,8 +234,10 @@
                         <label for="exampleInputPassword1">Address</label>
                         <span class="error" style="color:red;">*</span>
                         <div class="mb-3">
-                            <cfoutput><textarea class="form-control" name="address" id="exampleFormControlTextarea1" rows="3">#errorStruct.val.address#</textarea>
-                            <cfif structKeyExists(errorStruct.error, 7)> <span class="err"> #errorStruct.error.7#</span> </cfif> </cfoutput>
+                            <cfoutput>
+                                <textarea class="form-control" name="address" id="address" rows="3">#address#</textarea>
+                                <span class="err" id="er7"> </span> 
+                            </cfoutput>
                         </div>
                     </div>
                 </div>
@@ -261,8 +247,10 @@
                         <label for="exampleInputPassword1">Street</label>
                         <span class="error" style="color:red;">*</span>
                         <div class="mb-3">
-                            <cfoutput> <textarea class="form-control" name="street" id="exampleFormControlTextarea1" rows="3">#errorStruct.val.street#</textarea>
-                            <cfif structKeyExists(errorStruct.error, 8)> <span class="err"> #errorStruct.error.8#</span> </cfif> </cfoutput>
+                            <cfoutput> 
+                                <textarea class="form-control" name="street" id="street" rows="3">#street#</textarea>
+                                <span class="err" id="er8"> </span>
+                            </cfoutput>
                         </div>
                     </div>
                 </div>
@@ -270,11 +258,9 @@
         </div>
         <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-            <cfif structKeyExists(url, 'edit')> 
-                <button type="submit" name="updatesubmit" class="btn btn-info">Update</button>
-            <cfelse>
-                <button type="submit" name="submit" class="btn btn-primary">Save changes</button>
-            </cfif>
+
+            <button type="submit" name="submit" class="btn btn-primary">Save changes</button>
+    
         </div>
       </form>
     </div>
@@ -301,32 +287,32 @@
             <tr>
                 <td>Name</td>
                 <td> : </td>
-                <td>#errorStruct.val.fname & '  '&errorStruct.val.sname#</td>
+                <td>#fname & '  '&sname#</td>
             </tr>
             <tr>    
                 <td>Gender</td>
                 <td> : </td>
-                <td>#errorStruct.val.gender#</td>
+                <td>#gender#</td>
             </tr>
             <tr>    
                 <td>Date Of Birth</td>
                 <td> : </td>
-                <td>#DateFormat(errorStruct.val.dob,'dd-mm-yyyy')#</td>
+                <td>#DateFormat(dob,'dd-mm-yyyy')#</td>
             </tr>
             <tr>    
                 <td>Address</td>
                 <td> : </td>
-                <td>#errorStruct.val.address#</td>
+                <td>#address#</td>
             </tr>
             <tr>    
                 <td>Email</td>
                 <td> : </td>
-                <td>#errorStruct.val.email#</td>
+                <td>#email#</td>
             </tr>
             <tr>    
                 <td>Phone</td>
                 <td> : </td>
-                <td>#errorStruct.val.phone#</td>
+                <td>#phone#</td>
             </tr>
         </tbody>
     </table>
@@ -368,9 +354,8 @@
       
 
         
-        <script>
-        $( document ).ready(function() {
-            
+<script>
+    $( document ).ready(function() {
              if(document.getElementById('modalstat').value == "show")
              {
                 $("#modalcreate").modal('show');
@@ -382,5 +367,86 @@
              }  
         });
         </script>
+
+        <script>
+        function handleAdd(val) {
+            $("#modalcreate").modal('show');
+        }
+</script>
+
+<script>
+    function myFunction(event) {
+            var fname       = document.getElementById('fname').value;
+            var sname       = document.getElementById('sname').value;
+            var gender      = document.getElementById('gender').value;
+            var dob         = document.getElementById('dob').value;
+            var email       = document.getElementById('email').value;
+            var phone       = document.getElementById('phone').value;
+            var address     = document.getElementById('address').value;
+            var street      = document.getElementById('street').value;
+            if(fname == ""){
+                event.preventDefault();   
+                document.getElementById('er1').innerHTML = "Please enter first name";    
+            }
+            else{
+                document.getElementById('er1').innerHTML = "";
+            }
+            if(sname == ""){
+                event.preventDefault();   
+                document.getElementById('er2').innerHTML = "please  enter second name";    
+            }
+            else{
+                document.getElementById('er2').innerHTML = "";
+            }
+
+            if(gender == ""){
+                event.preventDefault();   
+                document.getElementById('er3').innerHTML = "please  select a gender";    
+            }
+            else{
+                document.getElementById('er3').innerHTML = "";
+            }
+
+            if(dob == ""){
+                event.preventDefault();   
+                document.getElementById('er4').innerHTML = "please  enter dob";    
+            }
+            else{
+                document.getElementById('er4').innerHTML = "";
+            }
+
+            if(email == ""){
+                event.preventDefault();   
+                document.getElementById('er5').innerHTML = "please  enter email";    
+            }
+            else{
+                document.getElementById('er5').innerHTML = "";
+            }
+
+            if(phone == ""){
+                event.preventDefault();   
+                document.getElementById('er6').innerHTML = "please  enter phone no";    
+            }
+            else{
+                document.getElementById('er6').innerHTML = "";
+            }
+
+            if(address == ""){
+                event.preventDefault();   
+                document.getElementById('er7').innerHTML = "please  enter address";    
+            }
+            else{
+                document.getElementById('er7').innerHTML = "";
+            }
+
+            if(street == ""){
+                event.preventDefault();   
+                document.getElementById('er8').innerHTML = "please  enter street name";    
+            }
+            else{
+                document.getElementById('er8').innerHTML = "";
+            }   
+    }
+</script>
 
 </html>

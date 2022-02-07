@@ -1,126 +1,79 @@
 
 <cfcomponent displayName='address' hint='mult'>
-
-     <cffunction  name="delete">
+     <cffunction  name="delete" access="remote">
         <!--- <cfset userdelete  = EntityLoadByPK("giggidy",#url.delete#) />
         <cfset EntityDelete(userdelete) /> --->
         <cfquery name="dlt" datasource="cold" result="sResult">
             DELETE FROM address_contacts WHERE id= <CFQUERYPARAM VALUE="#url.delete#">;
         </cfquery>
-
-        <cflocation url = "page.cfm" addToken = "no"> 
+        <cflocation url = ".../page.cfm" addToken = "no"> 
      </cffunction>
 
-    <cffunction  name="view">
-        <cfset errorStruct       = {} />
-        <cfset errorStruct.val   = {} />
-        <cfset errorStruct.error = {} />
-        <cfset usersdet          = EntityLoadByPK("giggidy", #url.view#) />
-        <cfset errorStruct.modalstat   = 'hide'/>
-        <cfset errorStruct.modalstat2  = 'show'/>
-        <cfset errorStruct.val = {fname="#usersdet.fname#",sname="#usersdet.sname#",gender="#usersdet.gender#",email="#usersdet.email#",dob="#usersdet.dob#",phone="#usersdet.phone#",address="#usersdet.address#",street="#usersdet.street_name#",photo="#usersdet.photo#"} />
-        <cfreturn errorStruct> 
+    <cffunction  name="view" access="remote">
+        <cfquery name="edit_det" datasource="cold" result="xResult">
+            SELECT * FROM address_contacts
+            WHERE id= <CFQUERYPARAM VALUE="#url.view#"  cfsqltype="cf_sql_integer">;
+        </cfquery>
+        <cfif xResult.recordcount NEQ 0>
+            <cflocation  url="../page.cfm?status=view&u_id=""&fname=#edit_det.fname#
+            &sname=#edit_det.sname#&gender=#edit_det.gender#&dob=#edit_det.dob#
+            &email=#edit_det.email#&phno=#edit_det.phone#&address=#edit_det.address#&street=#edit_det.street_name#" addtoken="no">
+        </cfif>
     </cffunction>
 
-    <cffunction  name="add" access="public" output="false"> 
-        <cfargument name="fname"   required="true">
-        <cfargument name="sname"   required="true"> 
-        <cfargument name="gender"  required="true">
-        <cfargument name="dob"     required="true">
-        <cfargument name="email"   required="true">
-        <cfargument name="phno"    required="true">
-        <cfargument name="image"   required="true">
-        <cfargument name="address" required="true">
-        <cfargument name="street"  required="true"> 
+    <cffunction  name="add" access="remote" output="false"> 
+        <cfargument name="fname"      required="true">
+        <cfargument name="sname"      required="true"> 
+        <cfargument name="gender"     required="true">
+        <cfargument name="dob"        required="true">
+        <cfargument name="email"      required="true">
+        <cfargument name="phno"       required="true">
+        <cfargument name="image"      required="true">
+        <cfargument name="address"    required="true">
+        <cfargument name="street"     required="true">
+        <cfargument name="update_id"  required="false"> 
+        <cfif arguments.update_id EQ "">
 
-        <cfset var errorStruct = {} />
-        <cfset var errorStruct.error = {} />
-        <cfset var errorStruct.val   = {} />
-        <cfset var modalStruct = {} />
-        <cfset errorStruct.insert("modalstat2",'hide',true)/>
-        <!--- validate fullname --->
-        <cfif arguments.fname EQ "">
-            <cfset  errorStruct.error.insert("1",'Please enter full name',true) />
-            <cfset  errorStruct.val.insert("fname",'#arguments.fname#',true)  />
+                <!--- Check existance of email--->
+                <cfquery name="check_email" datasource="cold" result="xResult">
+                    SELECT * FROM address_contacts
+                    WHERE email= <CFQUERYPARAM VALUE="#arguments.email#"  cfsqltype="cf_sql_varchar">;
+                </cfquery>
+                <cfif xResult.recordcount NEQ 0>
+                    <cflocation  url="../page.cfm?status=false&u_id=""&fname=#arguments.fname#
+                    &sname=#arguments.sname#&gender=#arguments.gender#&dob=#arguments.dob#
+                    &email=#arguments.email#&phno=#arguments.phno#&address=#arguments.address#&street=#arguments.street#" addtoken="no">
+                <cfelse>
+                    <cfif arguments.image NEQ "">
+                        <cffile 
+                            action = "upload" 
+                            fileField = "image" 
+                            destination="F:\Coldfushion\cfusion\wwwroot\tasks\addressbook\public\files"
+                            allowedExtensions="jpg"
+                            result='fileUploadResult'
+                            nameConflict = makeunique
+                        >
+                        <cfset img = #fileUploadResult.clientFile#>
+                    <cfelse>
+                        <cfset img = "">
+                    </cfif>
+                    <cfquery name="signupq" datasource="cold" result="sResult">
+                        INSERT INTO address_contacts (fname,sname,email,phone,gender,dob,photo,address,street_name)
+                        VALUES (<CFQUERYPARAM VALUE="#arguments.fname#"  cfsqltype="cf_sql_varchar">,
+                                <CFQUERYPARAM VALUE="#arguments.sname#"  cfsqltype="cf_sql_varchar">,
+                                <CFQUERYPARAM VALUE="#arguments.email#"  cfsqltype="cf_sql_varchar">,
+                                <CFQUERYPARAM VALUE="#arguments.phno#"   cfsqltype="cf_sql_numeric">,
+                                <CFQUERYPARAM VALUE="#arguments.gender#">,
+                                <CFQUERYPARAM VALUE="#DateFormat(arguments.dob,'yyyy-mm-dd')#" cfsqltype="CF_SQL_DATE">,
+                                <CFQUERYPARAM VALUE="#img#" cfsqltype="cf_sql_varchar">,
+                                <CFQUERYPARAM VALUE="#arguments.address#" cfsqltype="cf_sql_varchar">,
+                                <CFQUERYPARAM VALUE="#arguments.street#"  cfsqltype="cf_sql_varchar">);
+                    </cfquery>
+                    <cfif sResult.GENERATEDKEY neq "">
+                        <cflocation  url="../page.cfm" addtoken="no">
+                    </cfif>
+                </cfif>
         <cfelse>
-             <cfset errorStruct.val.insert("fname",'#arguments.fname#',true) />
-        </cfif>
-        <!--- validate secondname --->
-        <cfif arguments.sname EQ "">
-            <cfset errorStruct.error.insert("2",'Please enter second name',true) />
-            <cfset errorStruct.val.insert("sname",'#arguments.sname#',true) />
-        <cfelse>
-            <cfset errorStruct.val.insert("sname",'#arguments.sname#',true) />
-        </cfif>
-        <!--- validate gender --->
-        <cfif arguments.gender EQ "">
-            <cfset errorStruct.error.insert("3",'Please select a gender',true)  />
-            <cfset errorStruct.val.insert("gender",'#arguments.gender#',true)  />
-        <cfelse>
-            <cfset errorStruct.val.insert("gender",'#arguments.gender#',true) />
-        </cfif>
-        <!--- validate dob --->
-        <cfif arguments.dob EQ "">
-            <cfset errorStruct.error.insert("4",'Please enter DOB',true) />
-            <cfset errorStruct.val.insert("dob",'#arguments.dob#',true) />
-        <cfelse>
-            <cfset errorStruct.val.insert("dob",'#arguments.dob#',true) />
-        </cfif>
-        <!--- validate email --->
-        <cfif Not isValid('email',arguments.email)>
-            <cfset errorStruct.error.insert("5",'Please provide correct email',true) />
-            <cfset errorStruct.val.insert("email",'#arguments.email#',true) />
-        <cfelse>
-            <cfset errorStruct.val.insert("email",'#arguments.email#',true) />
-                <!--- Check existance --->
-            <cfquery name="check_email" datasource="cold" result="xResult">
-                SELECT * FROM address_contacts
-                WHERE email= <CFQUERYPARAM VALUE="#arguments.email#"  cfsqltype="cf_sql_varchar">;
-            </cfquery>
-            <cfif xResult.recordcount NEQ 0>
-                <cfset errorStruct.error.insert("5",'Email already exist',true) />
-            </cfif>
-
-        </cfif>
-
-            
-
-        <!--- validate phone --->
-        <cfif arguments.phno EQ "">
-            <cfset  errorStruct.error.insert("6",'Please enter Phone no',true)  />
-            <cfset  errorStruct.val.insert("phone",'#arguments.phno#',true)  />
-        <cfelse>
-            <cfset  errorStruct.val.insert("phone",'#arguments.phno#',true)  />
-            <!--- Check existance --->
-            <cfquery name="check_phone" datasource="cold" result="pResult">
-                SELECT * FROM address_contacts
-                WHERE phone= <CFQUERYPARAM VALUE="#arguments.phno#"  cfsqltype="cf_sql_varchar">;
-            </cfquery>
-            <cfif pResult.recordcount NEQ 0>
-                    <cfset  errorStruct.error.insert("6",'Phone no already exist',true) />
-            </cfif>
-        </cfif>
-        <!--- validate address --->
-        <cfif arguments.address EQ "">
-            <cfset  errorStruct.error.insert("7",'Please enter address',true)    />
-            <cfset  errorStruct.val.insert("address",'#arguments.address#',true) />
-        <cfelse>
-            <cfset errorStruct.val.insert("address",'#arguments.address#',true) />
-        </cfif>
-        <!--- validate street --->
-        <cfif arguments.street EQ "">
-            <cfset  errorStruct.error.insert("8",'Please enter street address',true)  />
-            <cfset  errorStruct.val.insert("street",'#arguments.street#',true) />
-        <cfelse>
-            <cfset  errorStruct.val.insert("street",'#arguments.street#',true)  />
-        </cfif>
-        <cfset      errorStruct.val.insert("photo",'#arguments.image#',true) />
-        <cfif StructIsEmpty(errorStruct.error) EQ "false">
-            <cfset errorStruct.insert("modalstat",'show',true)  />
-            <cfreturn errorStruct>
-        <cfelse>
-        
-            <cfset errorStruct.insert("modalstat",'hide',true)  />
             <cfif arguments.image NEQ "">
                 <cffile 
                     action = "upload" 
@@ -130,149 +83,10 @@
                     result='fileUploadResult'
                     nameConflict = makeunique
                 >
-                <cfset img = #fileUploadResult.clientFile#>
             <cfelse>
                 <cfset img = "">
-            </cfif>
-           
-
-
-            <cfquery name="signupq" datasource="cold" result="sResult">
-                INSERT INTO address_contacts (fname,sname,email,phone,gender,dob,photo,address,street_name)
-                VALUES (<CFQUERYPARAM VALUE="#arguments.fname#"  cfsqltype="cf_sql_varchar">,
-                        <CFQUERYPARAM VALUE="#arguments.sname#"  cfsqltype="cf_sql_varchar">,
-                        <CFQUERYPARAM VALUE="#arguments.email#"  cfsqltype="cf_sql_varchar">,
-                        <CFQUERYPARAM VALUE="#arguments.phno#"   cfsqltype="cf_sql_numeric">,
-                        <CFQUERYPARAM VALUE="#arguments.gender#">,
-                        <CFQUERYPARAM VALUE="#DateFormat(arguments.dob,'yyyy-mm-dd')#" cfsqltype="CF_SQL_DATE">,
-                        <CFQUERYPARAM VALUE="#img#" cfsqltype="cf_sql_varchar">,
-                        <CFQUERYPARAM VALUE="#arguments.address#" cfsqltype="cf_sql_varchar">,
-                        <CFQUERYPARAM VALUE="#arguments.street#"  cfsqltype="cf_sql_varchar">);
-            </cfquery>
-
+            </cfif>    
             
-            <cfreturn errorStruct>    
-        </cfif>
-
-    </cffunction>
-
-    <cffunction  name="get_det">
-        <cfset errorStruct       = {} />
-        <cfset errorStruct.val   = {} />
-        <cfset errorStruct.error = {} />
-        <cfset usersdet          = EntityLoadByPK("giggidy", #url.edit#) />
-        <cfset errorStruct.modalstat   = 'show'/>
-        <cfset errorStruct.modalstat2 = 'hide'/>
-        
-        <cfset errorStruct.val = {fname="#usersdet.fname#",sname="#usersdet.sname#",gender="#usersdet.gender#",email="#usersdet.email#",dob="#usersdet.dob#",phone="#usersdet.phone#",address="#usersdet.address#",street="#usersdet.street_name#",photo="#usersdet.photo#"} />
-        <cfreturn errorStruct> 
-    </cffunction>
-
-    <cffunction  name="update">
-        <cfargument name="fname"   required="true">
-        <cfargument name="sname"   required="true"> 
-        <cfargument name="gender"  required="true">
-        <cfargument name="dob"     required="true">
-        <cfargument name="email"   required="true">
-        <cfargument name="phno"    required="true">
-        <cfargument name="image"   required="true">
-        <cfargument name="address" required="true">
-        <cfargument name="street"  required="true"> 
-
-        <cfset var errorStruct = {} />
-        <cfset var errorStruct.error = {} />
-        <cfset var errorStruct.val   = {} />
-        <cfset var modalStruct = {} />
-        <cfset errorStruct.insert("modalstat2",'hide',true)/>
-        <!--- validate fullname --->
-        <cfif arguments.fname EQ "">
-            <cfset  errorStruct.error.insert("1",'Please enter full name',true) />
-            <cfset  errorStruct.val.insert("fname",'#arguments.fname#',true) />
-        <cfelse>
-            <cfset  errorStruct.val.insert("fname",'#arguments.fname#',true) />
-        </cfif>
-        <!--- validate secondname --->
-        <cfif arguments.sname EQ "">
-            <cfset errorStruct.error.insert("2",'Please enter second name',true)  />
-            <cfset errorStruct.val.insert("sname",'#arguments.sname#',true) />
-        <cfelse>
-            <cfset errorStruct.val.insert("sname",'#arguments.sname#',true) />
-        </cfif>
-        <!--- validate gender --->
-        <cfif arguments.gender EQ "">
-            <cfset  errorStruct.error.insert("3",'Please select a gender',true)  />
-            <cfset  errorStruct.val.insert("gender",'#arguments.gender#',true)  />
-        <cfelse>
-            <cfset  errorStruct.val.insert("gender",'#arguments.gender#',true)  />
-        </cfif>
-        <!--- validate dob --->
-        <cfif arguments.dob EQ "">
-            <cfset errorStruct.error.insert("4",'Please enter DOB',true) />
-            <cfset errorStruct.val.insert("dob",'#arguments.dob#',true) />
-        <cfelse>
-            <cfset errorStruct.val.insert("dob",'#arguments.dob#',true) />
-        </cfif>
-        <!--- validate email --->
-        <cfif Not isValid('email',arguments.email)>
-            <cfset errorStruct.error.insert("5",'Please provide correct email',true) />
-            <cfset errorStruct.val.insert("email",'#arguments.email#',true) />
-        <cfelse>
-            <cfset errorStruct.val.insert("email",'#arguments.email#',true) />
-                <!--- Check existance --->
-            <cfquery name="check_email" datasource="cold" result="xResult">
-                SELECT * FROM address_contacts
-                WHERE email= <CFQUERYPARAM VALUE="#arguments.email#"  cfsqltype="cf_sql_varchar"> And id <> 
-                            <CFQUERYPARAM VALUE="#url.edit#"  cfsqltype="cf_sql_INTEGER"> ;
-            </cfquery>
-            <cfif xResult.recordcount NEQ 0>
-                    <cfset errorStruct.error.insert("5",'Email already exist',true) />
-            </cfif>
-        </cfif>
-        <!--- validate phone --->
-        <cfif arguments.phno EQ "">
-            <cfset errorStruct.error.insert("6",'Please enter Phone no',true)  />
-            <cfset errorStruct.val.insert("phone",'#arguments.phno#',true)  />
-        <cfelse>
-            <cfset errorStruct.val.insert("phone",'#arguments.phno#',true)  />
-            <!--- Check existance --->
-            <cfquery name="check_phone" datasource="cold" result="pResult">
-                SELECT * FROM address_contacts
-                WHERE phone= <CFQUERYPARAM VALUE="#arguments.phno#"  cfsqltype="cf_sql_varchar"> And id <> 
-                             <CFQUERYPARAM VALUE="#url.edit#"  cfsqltype="cf_sql_INTEGER">;
-            </cfquery>
-            <cfif pResult.recordcount NEQ 0>
-                    <cfset errorStruct.error.insert("6",'Phone no already exist',true) />
-            </cfif>
-        </cfif>
-        <!--- validate address --->
-        <cfif arguments.address EQ "">
-            <cfset  errorStruct.error.insert("7",'Please enter address',true)  />
-            <cfset  errorStruct.val.insert("address",'#arguments.address#',true) />
-        <cfelse>
-             <cfset errorStruct.val.insert("address",'#arguments.address#',true)  />
-        </cfif>
-        <!--- validate street --->
-        <cfif arguments.street EQ "">
-            <cfset  errorStruct.error.insert("8",'Please enter street address',true)  />
-            <cfset  errorStruct.val.insert("street",'#arguments.street#',true)  />
-        <cfelse>
-            <cfset  errorStruct.val.insert("street",'#arguments.street#',true) />
-        </cfif>
-        <cfset  errorStruct.val.insert("photo",'#arguments.image#',true)  />
-        <cfif StructIsEmpty(errorStruct.error) EQ "false">
-             <cfset errorStruct.insert("modalstat",'show',true) />
-            <cfreturn errorStruct>
-        <cfelse>
-        
-            <cfset  errorStruct.insert("modalstat",'hide',true) />
-            <cffile 
-                action = "upload" 
-                fileField = "image" 
-                destination="F:\Coldfushion\cfusion\wwwroot\tasks\addressbook\public\files"
-                allowedExtensions="jpg"
-                result='fileUploadResult'
-                nameConflict = makeunique
-            >
             <cfquery name="updates" datasource="cold" result="sResult">
                 UPDATE address_contacts SET 
                 fname= <CFQUERYPARAM VALUE="#arguments.fname#"    cfsqltype="cf_sql_varchar">,
@@ -283,13 +97,26 @@
                 dob = <CFQUERYPARAM VALUE="#DateFormat(arguments.dob,'yyyy-mm-dd')#" cfsqltype="cf_sql_date">,
                 address = <CFQUERYPARAM VALUE="#arguments.address#"   cfsqltype="cf_sql_varchar">,
                 street_name= <CFQUERYPARAM VALUE="#arguments.street#" cfsqltype="cf_sql_varchar"> 
-                WHERE id=#url.edit#;
+                WHERE id=#arguments.update_id#;
             </cfquery>
-            <cfreturn errorStruct>    
-        </cfif>
- 
+            <cflocation  url=".../page.cfm" addtoken="no">
+        </cfif>  
+
     </cffunction>
-    <cffunction  name="pdfdownload">
+
+    <cffunction  name="get_det" access="remote" output="true">
+        <cfquery name="edit_det" datasource="cold" result="xResult">
+            SELECT * FROM address_contacts
+            WHERE id= <CFQUERYPARAM VALUE="#url.edit#"  cfsqltype="cf_sql_integer">;
+        </cfquery>
+        <cfif xResult.recordcount NEQ 0>
+            <cflocation  url="../page.cfm?status=true&u_id=#edit_det.id#&fname=#edit_det.fname#
+            &sname=#edit_det.sname#&gender=#edit_det.gender#&dob=#edit_det.dob#
+            &email=#edit_det.email#&phno=#edit_det.phone#&address=#edit_det.address#&street=#edit_det.street_name#" addtoken="no">
+        </cfif>
+    </cffunction>
+
+    <cffunction  name="pdfdownload" access="remote">
         <cfset get_users = EntityLoad("giggidy") />
         <cfdocument format="PDF"  filename="file.pdf" overwrite="Yes">
         <!-- Theme style -->
@@ -319,7 +146,7 @@
         <cfprint type="pdf" source="file.pdf" printer="HP LaserJet 4345 CS">
     </cffunction>
     
-    <cffunction  name="exceldownload">
+    <cffunction  name="exceldownload" access="remote">
         <cfset get_users = EntityLoad("giggidy") />
         // Make a spreadsheet object
         <cfset spreadsheet = spreadsheetNew("Sheet A") />
@@ -343,7 +170,7 @@
         <cfcontent type="application/vnd.msexcel" variable="#SpreadSheetReadBinary(spreadsheet)#">
     </cffunction>
 
-    <cffunction  name="print">
+    <cffunction  name="print" access="remote">
         <cfset get_users = EntityLoad("giggidy") />
         <cfdocument format="PDF"  filename="file.pdf" overwrite="Yes">
         <!-- Theme style -->

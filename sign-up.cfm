@@ -1,19 +1,16 @@
-<cfset errorStruct = {}/>
-<cfset status      = ""/>
-<cfif structKeyExists(form, 'register')> 
-    <cfscript> 
-      validating            = createObject("component",'components/authentication');
-      errorStruct           = validating.validateUsersignup(form.name,form.username,form.email,form.password,form.pass2);
-      isEmpty               = StructIsEmpty(errorStruct);
-    </cfscript>
-    <cfif isEmpty eq "Yes">
-      <cfset authentication    = createObject("component",'components/authentication')/>
-      <cfset status            = authentication.SignupMethod(form.name,form.username,form.email,form.password,form.pass2)/>
-    </cfif>
-    <cfif status eq "YES">
-        Anoop
-    </cfif>
+<cfset status         = ""/>
+<cfset name           = ""/>
+<cfset username       = ""/>
+<cfset email          = ""/>
 
+<!--- for error msg --->
+<cfif structKeyExists(url, 'status')> 
+  <cfif url.status eq "false">
+      <cfset status     = "false"/>
+      <cfset name       = "#url.name#"/>
+      <cfset username   = "#url.user#"/>
+      <cfset email      = "#url.email#"/>
+  </cfif>
 </cfif>
 
 <!DOCTYPE html>
@@ -38,23 +35,27 @@
     <cfoutput>
         <div class="card-body p-4 p-sm-5">
           <h5 class="card-title text-center mb-5">SIGN UP</h5>
-            <form method="post">
+            <form method="post" action="components/authentication.cfc?method=SignupMethod" onsubmit="myFunction(event)">
               <div class="form-floating mb-3">
-                <input type="text" name="name" class="form-control" id="floatingInput" placeholder="Full Name"> <cfif structKeyExists(errorStruct, 1)> <span class="err">#errorStruct.1#</span> </cfif>
+                <input type="text" name="name" id="name" class="form-control" id="floatingInput" value="#name#" placeholder="Full Name">    <p class="err" id="er1"></p> 
               </div>
               <div class="form-floating mb-3">
-                <input type="email" name="email" class="form-control" id="floatingInput" placeholder="Email Id"> <cfif structKeyExists(errorStruct, 2)> <span class="err">#errorStruct.2#</span> </cfif>
+                <input type="email" name="email"  id="email" class="form-control" id="floatingInput" value="#email#" placeholder="Email Id">   <p class="err" id="er2"></p> 
               </div>
               <div class="form-floating mb-3">
-                <input type="text" name="username" class="form-control" id="floatingInput" placeholder="Username"> <cfif structKeyExists(errorStruct, 3)> <span class="err"> #errorStruct.3# </span></cfif>
+                <input type="text" name="username" id="username" class="form-control" id="floatingInput" value="#username#" placeholder="Username"> <p class="err" id="er3"></p>
               </div>
               <div class="form-floating mb-3">
-                <input type="password" name="password" class="form-control" id="floatingInput" placeholder="Password"> <cfif structKeyExists(errorStruct, 4)> <span class="err">#errorStruct.4# </span></cfif>
+                <input type="password" name="password" id="password" class="form-control" id="floatingInput" placeholder="Password">  <p class="err" id="er4"> </p>
               </div>
               <div class="form-floating mb-3">
-                <input type="password" name="pass2" class="form-control" id="floatingInput" placeholder="Confirm Password"> <cfif structKeyExists(errorStruct, 5)> <span class="err"> #errorStruct.5# </span></cfif>
+                <input type="password" name="pass2" id="pass2" class="form-control" id="floatingInput" placeholder="Confirm Password"> <p class="err" id="er5"></p>
               </div>
-              <cfif structKeyExists(errorStruct, 6)><span class="err"> #errorStruct.6# </span> </cfif>
+              <span class="err" id="er6">  </span>
+
+              <cfif status eq "false">
+                <span class="err"> Email already exists! </span>
+              </cfif>
               <div class="d-grid s2">
                 <button class="btn btn-primary btn-login text-uppercase fw-bold btn-lg" name="register" type="submit">Register</button>
               </div>
@@ -76,13 +77,6 @@
         </div>
      </cfoutput>
 
-    <cfif IsNull(errorMessage)>
-    <cfelse>
-        <cfloop array="#errorMessage#" item="x">
-          <cfoutput>#x# <br/> </cfoutput>
-        </cfloop>
-    </cfif>
-
   </div>
   </div>
 </div>
@@ -95,5 +89,64 @@
 <script src="http://127.0.0.1:8500/tasks/addressbook/public/adminlte.min.js"></script>
 <!-- AdminLTE for demo purposes -->
 <script src="http://127.0.0.1:8500/tasks/addressbook/public/demo.js"></script>
+
+<script>
+  function myFunction(event) {
+    var name        = document.getElementById('name').value;
+    var email       = document.getElementById('email').value;
+    var username    = document.getElementById('username').value;
+    var pass1       = document.getElementById('password').value;
+    var pass2       = document.getElementById('pass2').value;
+    if(name == ""){
+        event.preventDefault();   
+        document.getElementById('er1').innerHTML = "Please enter name";    
+    }
+    else{
+        document.getElementById('er1').innerHTML = "";
+    }
+    if(email == ""){
+        event.preventDefault();   
+        document.getElementById('er2').innerHTML = "please  enter email";    
+    }
+    else{
+        document.getElementById('er2').innerHTML = "";
+    }
+
+    if(username == ""){
+        event.preventDefault();   
+        document.getElementById('er3').innerHTML = "please  enter username";    
+    }
+    else{
+        document.getElementById('er3').innerHTML = "";
+    }
+
+    if(pass1 == ""){
+        event.preventDefault();   
+        document.getElementById('er4').innerHTML = "please  enter password";    
+    }
+    else{
+        document.getElementById('er4').innerHTML = "";
+    }
+
+    if(pass2 == ""){
+        event.preventDefault();   
+        document.getElementById('er5').innerHTML = "please  re-enter password";    
+    }
+    else{
+        document.getElementById('er5').innerHTML = "";
+    }
+
+    if(pass1 != pass2){
+        event.preventDefault();   
+        document.getElementById('er6').innerHTML = "please  doesnot matching";    
+    }
+    else{
+        document.getElementById('er6').innerHTML = "";
+    }
+
+    
+  }
+</script>
+
 </body>
 </html>

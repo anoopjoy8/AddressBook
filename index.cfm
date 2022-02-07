@@ -1,33 +1,10 @@
-<cfset errorStructlog = {}/>
 <cfset status         = ""/>
-<cfset validating     = createObject("component",'components/authentication')/>
-<cfif structKeyExists(form, 'submit')> 
-  <cfset validating            = createObject("component",'components/authentication')/>
-  <cfset errorStructlog        = validating.validateUser(form.username,form.pass) />
-  <cfset isEmpty               = StructIsEmpty(errorStructlog) />
-  <cfif isEmpty eq "Yes">
-    <cfset loging                = createObject("component",'components/authentication') />
-    <cfset status                = loging.loginMethod(form.username,form.pass) />
-    <cfif status eq "true">
-      <cflocation url ="page.cfm">
-    </cfif>
+<!--- for error msg --->
+<cfif structKeyExists(url, 'status')> 
+  <cfif url.status eq "false">
+      <cfset status = "false"/>
   </cfif>
 </cfif>
-
-<cfif structKeyExists(url, 'ul')> 
-   <cfif url.ul eq "google">
-      <cfset loging                = createObject("component",'components/authentication')/>
-      <cfset status = loging.googleMethod()/>
-      <cfif status eq "true">
-          <cflocation url ="page.cfm">
-      </cfif>
-   </cfif>
-   <cfif url.ul eq "fb">
-      <cfset loging                = createObject("component",'components/authentication')/>
-      <cfset status                = loging.facebookMethod()/>
-   </cfif>
-</cfif>
-
 
 <!DOCTYPE html>
 <html>
@@ -52,12 +29,12 @@
   <div class="card-body p-4 p-sm-5">
     <h5 class="card-title text-center mb-5">Login</h5>
     <cfoutput>
-        <form method="post"   method="post" onsubmit="myFunction(event)">
+        <form method="post" action="components/authentication.cfc?method=validateUser"  method="post" onsubmit="myFunction(event)">
           <div class="form-floating mb-3">
-            <input type="text" name="username" class="form-control" id="floatingInput" placeholder="Username/Email"> <cfif structKeyExists(errorStructlog, 1)> <span class="err" id="er1">#errorStructlog.1#</span> </cfif>
+            <input type="text" name="username" class="form-control" id="floatingInput" placeholder="Username/Email">  <p class="err" id="er1"></p> 
           </div>
           <div class="form-floating mb-3">
-            <input type="password" name="pass" class="form-control" id="floatingPassword" placeholder="Password"> <cfif structKeyExists(errorStructlog, 2)> <span class="err" id="er2">#errorStructlog.2#</span> </cfif>
+            <input type="password" name="pass" class="form-control" id="floatingPassword" placeholder="Password">     <p class="err" id="er2"></p>
           </div>
           <cfif status eq "false">
               <span class="err"> Invalid Credentials! </span>
@@ -67,12 +44,12 @@
           </div>
           <hr class="my-4">
           <div class="d-grid mb-2">
-            <a href="http://127.0.0.1:8500/tasks/addressbook/index.cfm?ul=google">
+            <a href="components/authentication.cfc?method=googleMethod">
              <img src="http://127.0.0.1:8500/tasks/addressbook/public/images/google-logo.png" alt="Girl in a jacket" width="50" height="50"> Sign in with Google 
             </a>
           </div>
           <div class="d-grid ">
-            <!--- <a href="http://127.0.0.1:8500/tasks/addressbook/index.cfm?ul=facebook">
+            <!--- <a href="components/authentication.cfc?method=facebookMethod">
                 <img src="http://127.0.0.1:8500/tasks/addressbook/public/images/face-logo.png" alt="Girl in a jacket" width="50" height="50">  Sign in with Facebook
               </a> --->
 
@@ -184,8 +161,19 @@
 function myFunction(event) {
   var email  = document.getElementById('floatingInput').value;
   var pass   = document.getElementById('floatingPassword').value;
-  if((email == "") || (pass == "")){
-           event.preventDefault();       
+  if(email == ""){
+      event.preventDefault();   
+      document.getElementById('er1').innerHTML = "Please enter username";    
+  }
+  else{
+      document.getElementById('er1').innerHTML = "";
+  }
+  if(pass == ""){
+      event.preventDefault();   
+      document.getElementById('er2').innerHTML = "please  enter password";    
+  }
+  else{
+      document.getElementById('er2').innerHTML = "";
   }
 
   
