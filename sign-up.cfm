@@ -32,7 +32,7 @@
       <div class="card-body p-4 p-sm-5 bg">
           <i class="fas fa-address-book fa-7x cent"></i>
       </div>
-    <cfoutput>
+      <cfoutput>
         <div class="card-body p-4 p-sm-5">
           <h5 class="card-title text-center mb-5">SIGN UP</h5>
             <form method="post" action="components/authentication.cfc?method=SignupMethod" onsubmit="myFunction(event)">

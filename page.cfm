@@ -15,7 +15,9 @@
 <cfset photo   =""/>
 <cfset u_id    =""/>
 
-<cfset get_users = EntityLoad("giggidy") />
+<!--- get contact list --->
+<cfset ctlist    = createObject("component",'components/address')/>
+<cfset list      = ctlist.contactListContent()/>
 
 <!--- for error msg --->
 <cfif structKeyExists(url, 'status')>
@@ -49,8 +51,8 @@
   <link href="http://127.0.0.1:8500/tasks/addressbook/public/css/datepicker/datepicker3.css" rel="stylesheet" />
 </head>
 <body>
-        <cfinclude template = "header.cfm">
-        <div class="newnav">
+    <cfinclude template = "header.cfm">
+    <div class="newnav">
         <nav class="nav navbar-white bg-white justify-content-end navonly">
             <ul class="nav">
                 <li class="nav-item">
@@ -68,51 +70,27 @@
         <div class="row">
             <div class="col-sm-3">
                 <div class="card">
-                <div class="card-body cardstyle">
-                    <img src="http://127.0.0.1:8500/tasks/addressbook/public/images/profile.png" alt="Girl in a jacket" width="100" height="100">
-                    <br> 
-                    <span id="weltext"><cfoutput>#session.dataLoggedIn.name# </cfoutput></span>
-                    <br>
-                    <br>
-                    <td><!-- <button type="button" class="btn btn-outline-primary" data-toggle="modal" data-target="#modalcreate">Create Contact</button> -->
-                    <a onclick="handleAdd('ok')"><button type="button" class="btn btn-outline-primary">Create Contact</button> </a>
-                    </td>
-                </div>
+                    <div class="card-body cardstyle">
+                        <img src="http://127.0.0.1:8500/tasks/addressbook/public/images/profile.png" alt="Girl in a jacket" width="100" height="100">
+                        <br> 
+                        <span id="weltext"><cfoutput>#session.dataLoggedIn.name# </cfoutput></span>
+                        <br>
+                        <br>
+                        <td><!-- <button type="button" class="btn btn-outline-primary" data-toggle="modal" data-target="#modalcreate">Create Contact</button> -->
+                            <a onclick="handleAdd('ok')"><button type="button" class="btn btn-outline-primary">Create Contact</button> </a>
+                        </td>
+                    </div>
                 </div>
             </div>
             <div class="col-sm-9">
                 <div class="card">
-                <div class="card-body">
-                    <table class="table">
-                        <thead>
-                            <tr>
-                            <th scope="col">Name</th>
-                            <th scope="col">Email</th>
-                            <th scope="col">Phone Number</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <cfloop array="#get_users#" item="x">                               
-                                    <cfoutput>
-                                        <tr>
-                                        <td>#x.fname#</td>
-                                        <td>#x.email#</td>
-                                        <td>#x.phone#</td>
-                                        <td><a href="components/address.cfc?method=get_det&edit=#x.id#"><button type="button"   class="btn btn-outline-primary">Edit</button></a></td>
-                                        <td><a href="components/address.cfc?method=delete&delete=#x.id#"><button type="button" class="btn btn-outline-primary">Delete</button></a></td>
-                                        <td><a href="components/address.cfc?method=view&view=#x.id#""><button type="button" class="btn btn-outline-primary">View</button></a></td>
-                                        </tr>
-                                    </cfoutput> 
-                            </cfloop>
-                        
-                        </tbody>
-                    </table>
-
+                    <div class="card-body">
+                        <cfoutput> #list# </cfoutput>
+                    </div>
                 </div>
-                </div>
-            </div>
             </div>
         </div>
+    </div>
 
 <!-- Modal1 -->
 <div class="modal fade" id="modalcreate" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">

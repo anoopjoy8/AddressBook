@@ -6,8 +6,8 @@
 
         <cfquery name="login_check" datasource="cold">
             SELECT * FROM address_users 
-            WHERE user_name     = <CFQUERYPARAM VALUE="#arguments.username#"     cfsqltype="cf_sql_varchar"> 
-                  and password  = <CFQUERYPARAM VALUE="#arguments.pass#"         cfsqltype="cf_sql_varchar">;
+            WHERE user_name = <CFQUERYPARAM VALUE="#arguments.username#"cfsqltype="cf_sql_varchar"> 
+                  and password = <CFQUERYPARAM VALUE="#arguments.pass#" cfsqltype="cf_sql_varchar">;
          </cfquery>
         <!--- checking for login result --->
         <cfif login_check.recordcount NEQ 0>
