@@ -6,7 +6,7 @@
 
         <cfquery name="login_check" datasource="cold">
             SELECT * FROM address_users 
-            WHERE user_name = <CFQUERYPARAM VALUE="#arguments.username#"cfsqltype="cf_sql_varchar"> 
+            WHERE user_name    = <CFQUERYPARAM VALUE="#arguments.username#"cfsqltype="cf_sql_varchar"> 
                   and password = <CFQUERYPARAM VALUE="#arguments.pass#" cfsqltype="cf_sql_varchar">;
          </cfquery>
         <!--- checking for login result --->
@@ -39,15 +39,15 @@
         <cfquery name="signupq" datasource="cold" result="sResult">
             INSERT INTO address_users (name,user_name,email,password)
             VALUES (<CFQUERYPARAM VALUE="#arguments.name#"  cfsqltype="cf_sql_varchar">, 
-                    <CFQUERYPARAM VALUE="#arguments.username#"  cfsqltype="cf_sql_varchar">,
-                    <CFQUERYPARAM VALUE="#arguments.email#"     cfsqltype="cf_sql_varchar">, 
-                    <CFQUERYPARAM VALUE="#arguments.password#"      cfsqltype="cf_sql_varchar">);
+                    <CFQUERYPARAM VALUE="#arguments.username#" cfsqltype="cf_sql_varchar">,
+                    <CFQUERYPARAM VALUE="#arguments.email#" cfsqltype="cf_sql_varchar">, 
+                    <CFQUERYPARAM VALUE="#arguments.password#" cfsqltype="cf_sql_varchar">);
         </cfquery>
 
         <cfif sResult.GENERATEDKEY neq "">
             <cfquery name="login_check" datasource="cold">
                 SELECT *   FROM address_users
-                WHERE id = <CFQUERYPARAM VALUE="#sResult.GENERATEDKEY#"     cfsqltype="cf_sql_integer">;
+                WHERE id = <CFQUERYPARAM VALUE="#sResult.GENERATEDKEY#" cfsqltype="cf_sql_integer">;
             </cfquery>
             <cfset session.dataLoggedIn = {'username'=login_check.user_name,'name'=login_check.name,'log_id'=sResult.GENERATEDKEY}>
             <cflocation  url="../page.cfm" addtoken="no">
@@ -73,21 +73,21 @@
 
         <cfquery name="login_check" datasource="cold">
             SELECT * FROM address_users 
-            WHERE email     = <CFQUERYPARAM VALUE=#googleLoginResult.other.email#     cfsqltype="cf_sql_varchar"> ;
+            WHERE email     = <CFQUERYPARAM VALUE=#googleLoginResult.other.email# cfsqltype="cf_sql_varchar"> ;
          </cfquery>
         
         <cfif login_check.recordcount EQ 0>
             <cfquery name="signupq" datasource="cold" result="sResult">
                 INSERT INTO address_users (name,user_name,email)
-                VALUES (<CFQUERYPARAM VALUE="#googleLoginResult.other.given_name#"    cfsqltype="cf_sql_varchar">, 
-                        <CFQUERYPARAM VALUE="#googleLoginResult.other.given_name#"    cfsqltype="cf_sql_varchar">,
-                        <CFQUERYPARAM VALUE="#googleLoginResult.other.email#"         cfsqltype="cf_sql_varchar">);
+                VALUES (<CFQUERYPARAM VALUE="#googleLoginResult.other.given_name#" cfsqltype="cf_sql_varchar">, 
+                        <CFQUERYPARAM VALUE="#googleLoginResult.other.given_name#" cfsqltype="cf_sql_varchar">,
+                        <CFQUERYPARAM VALUE="#googleLoginResult.other.email#" cfsqltype="cf_sql_varchar">);
             </cfquery>
             <cfif sResult.GENERATEDKEY neq "">
                 <cfquery name="login_check1" datasource="cold">
                     SELECT * FROM address_users 
-                    WHERE  email     = <CFQUERYPARAM VALUE="#googleLoginResult.other.email#"  cfsqltype="cf_sql_varchar"> 
-                    and    id        = <CFQUERYPARAM VALUE="#sResult.GENERATEDKEY#"           cfsqltype="cf_sql_INTEGER">;
+                    WHERE  email     = <CFQUERYPARAM VALUE="#googleLoginResult.other.email#" cfsqltype="cf_sql_varchar"> 
+                    and    id        = <CFQUERYPARAM VALUE="#sResult.GENERATEDKEY#" cfsqltype="cf_sql_INTEGER">;
                 </cfquery>
                 <cfif login_check1.recordcount NEQ 0>
                     <cfset session.dataLoggedIn = {'username'=login_check1.user_name,'log_id'=login_check1.id,'name'=login_check1.name}>

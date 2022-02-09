@@ -9,4 +9,4 @@
       <cfproperty name="dob">
       <cfproperty name="photo">
       <cfproperty name="street_name">
-  </cfcomponent>
+</cfcomponent>
